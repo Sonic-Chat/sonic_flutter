@@ -23,6 +23,84 @@ class AuthService {
   });
 
   /*
+   * Service Implementation for fetching logged in account.
+   */
+  Future<Account> getUser() async {
+    try {
+      // Get the logged in user details.
+      FA.User? firebaseUser = _firebaseAuth.currentUser;
+
+      // Check if user is not null.
+      if (firebaseUser == null) {
+        // If there is no user logged is using firebase, throw an exception.
+        throw AuthException(
+          message: AuthError.UNAUTHENTICATED,
+        );
+      }
+      // Fetch the ID token for the user.
+      String firebaseAuthToken =
+          await _firebaseAuth.currentUser!.getIdToken(true);
+
+      // Prepare URL and the auth header.
+      Uri url = Uri.parse("$apiUrl/api/v1/auth/identity");
+
+      // Preparing the headers for the request.
+      Map<String, String> headers = {
+        "Authorization": "Bearer $firebaseAuthToken",
+      };
+
+      // Fetch user details from the server
+      http.Response response = await http
+          .get(
+            url,
+            headers: headers,
+          )
+          .timeout(const Duration(seconds: 10));
+
+      // Handling Errors.
+      if (response.statusCode >= 400 && response.statusCode < 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+        throw AuthException(
+            message: AuthError.values
+                .firstWhere((error) => error.toString() == body['message']));
+      } else if (response.statusCode >= 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+
+        log.e(body["message"]);
+
+        throw GeneralException(
+          message: GeneralError.SOMETHING_WENT_WRONG,
+        );
+      }
+
+      // Decoding account from JSON.
+      Account account = Account.fromJson(json.decode(response.body));
+
+      // Returning account.
+      return account;
+    } on SocketException {
+      log.wtf("Dedicated Server Offline");
+      throw GeneralException(
+        message: GeneralError.SOMETHING_WENT_WRONG,
+      );
+    } on TimeoutException {
+      log.wtf("Dedicated Server Offline");
+      throw GeneralException(
+        message: GeneralError.SOMETHING_WENT_WRONG,
+      );
+    } on FA.FirebaseAuthException catch (error) {
+      if (error.code == "network-request-failed") {
+        log.wtf("Firebase Server Offline");
+        throw GeneralException(
+          message: GeneralError.SOMETHING_WENT_WRONG,
+        );
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  /*
    * Service Implementation account registration.
    * @param registerAccountDto DTO Implementation for account registration.
    */
