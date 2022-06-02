@@ -47,6 +47,7 @@ class AuthService {
           )
           .timeout(const Duration(seconds: 10));
 
+      // Handling Errors.
       if (response.statusCode >= 400 && response.statusCode < 500) {
         Map<String, dynamic> body = json.decode(response.body);
         throw AuthException(
