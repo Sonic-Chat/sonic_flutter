@@ -87,20 +87,47 @@ class AuthService {
       return account;
     } on SocketException {
       log.wtf("Dedicated Server Offline");
-      throw GeneralException(
-        message: GeneralError.SOMETHING_WENT_WRONG,
-      );
+
+      // Fetch account from Offline Storage.
+      Account? dbAccount = _fetchAccountFromOfflineDb();
+
+      // Return account if logged in else throw error.
+      if (dbAccount != null) {
+        return dbAccount;
+      } else {
+        throw AuthException(
+          message: AuthError.UNAUTHENTICATED,
+        );
+      }
     } on TimeoutException {
       log.wtf("Dedicated Server Offline");
-      throw GeneralException(
-        message: GeneralError.SOMETHING_WENT_WRONG,
-      );
+
+      // Fetch account from Offline Storage.
+      Account? dbAccount = _fetchAccountFromOfflineDb();
+
+      // Return account if logged in else throw error.
+      if (dbAccount != null) {
+        return dbAccount;
+      } else {
+        throw AuthException(
+          message: AuthError.UNAUTHENTICATED,
+        );
+      }
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
         log.wtf("Firebase Server Offline");
-        throw GeneralException(
-          message: GeneralError.SOMETHING_WENT_WRONG,
-        );
+
+        // Fetch account from Offline Storage.
+        Account? dbAccount = _fetchAccountFromOfflineDb();
+
+        // Return account if logged in else throw error.
+        if (dbAccount != null) {
+          return dbAccount;
+        } else {
+          throw AuthException(
+            message: AuthError.UNAUTHENTICATED,
+          );
+        }
       } else {
         rethrow;
       }
@@ -159,18 +186,18 @@ class AuthService {
     } on SocketException {
       log.wtf("Dedicated Server Offline");
       throw GeneralException(
-        message: GeneralError.SOMETHING_WENT_WRONG,
+        message: GeneralError.OFFLINE,
       );
     } on TimeoutException {
       log.wtf("Dedicated Server Offline");
       throw GeneralException(
-        message: GeneralError.SOMETHING_WENT_WRONG,
+        message: GeneralError.OFFLINE,
       );
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
         log.wtf("Firebase Server Offline");
         throw GeneralException(
-          message: GeneralError.SOMETHING_WENT_WRONG,
+          message: GeneralError.OFFLINE,
         );
       } else {
         rethrow;
@@ -231,18 +258,18 @@ class AuthService {
     } on SocketException {
       log.wtf("Dedicated Server Offline");
       throw GeneralException(
-        message: GeneralError.SOMETHING_WENT_WRONG,
+        message: GeneralError.OFFLINE,
       );
     } on TimeoutException {
       log.wtf("Dedicated Server Offline");
       throw GeneralException(
-        message: GeneralError.SOMETHING_WENT_WRONG,
+        message: GeneralError.OFFLINE,
       );
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
         log.wtf("Firebase Server Offline");
         throw GeneralException(
-          message: GeneralError.SOMETHING_WENT_WRONG,
+          message: GeneralError.OFFLINE,
         );
       } else {
         rethrow;
@@ -272,5 +299,13 @@ class AuthService {
     log.i("Saving account to Hive DB");
     _accountDb.put(LOGGED_IN_USER, account);
     log.i("Saved account to Hive DB");
+  }
+
+  /*
+   * Service implementation for saving user in offline storage.
+   */
+  Account? _fetchAccountFromOfflineDb() {
+    log.i("Fetching account from Hive DB");
+    return _accountDb.get(LOGGED_IN_USER);
   }
 }
