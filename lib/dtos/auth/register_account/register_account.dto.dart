@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'register_account.dto.g.dart';
 
 @JsonSerializable()
-class RegisterAccount {
+class RegisterAccountDto {
   @JsonKey(defaultValue: "")
   final String email;
 
@@ -16,15 +16,15 @@ class RegisterAccount {
   @JsonKey(defaultValue: "")
   final String username;
 
-  RegisterAccount({
+  RegisterAccountDto({
     required this.email,
     required this.password,
     required this.fullName,
     required this.username,
   });
 
-  factory RegisterAccount.fromJson(Map<String, dynamic> json) =>
-      _$RegisterAccountFromJson(json);
+  factory RegisterAccountDto.fromJson(Map<String, dynamic> json) =>
+      _$RegisterAccountDtoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$RegisterAccountToJson(this);
+  Map<String, dynamic> toJson() => _$RegisterAccountDtoToJson(this);
 }
