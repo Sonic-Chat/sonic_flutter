@@ -16,7 +16,7 @@ class Root extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Providers(
       child: App(),
-      apiUrl: "http://10.0.2.2:5000/v1/api",
+      apiUrl: "http://10.0.2.2:5000",
       rawApiUrl: "10.0.2.2:5000",
     );
   }
