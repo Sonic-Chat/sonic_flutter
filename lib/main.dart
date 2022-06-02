@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sonic_flutter/utils/startup.util.dart';
 
-void main() {
+Future<void> main() async {
+  await startup();
+
   runApp(const MyApp());
 }
 
@@ -13,7 +16,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        useMaterial3: true,
       ),
+      debugShowCheckedModeBanner: false,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
