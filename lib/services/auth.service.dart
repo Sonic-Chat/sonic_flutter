@@ -240,4 +240,19 @@ class AuthService {
       }
     }
   }
+
+  /*
+   * Service Implementation account log out.
+   */
+  Future<void> logOut() async {
+    try {
+      await _firebaseAuth.signOut();
+    } catch (error, stackTrace) {
+      log.e(error, error, stackTrace);
+
+      throw GeneralException(
+        message: GeneralError.SOMETHING_WENT_WRONG,
+      );
+    }
+  }
 }
