@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:sonic_flutter/constants/hive.constant.dart';
 import 'package:sonic_flutter/dtos/auth/login_account/login_account.dto.dart';
 import 'package:sonic_flutter/dtos/auth/register_account/register_account.dto.dart';
 import 'package:sonic_flutter/enum/auth_error.enum.dart';
@@ -17,6 +19,8 @@ class AuthService {
   final String apiUrl;
 
   final FA.FirebaseAuth _firebaseAuth = FA.FirebaseAuth.instance;
+
+  final Box<Account> _accountDb = Hive.box<Account>(LOGGED_IN_USER_BOX);
 
   AuthService({
     required this.apiUrl,
@@ -75,6 +79,9 @@ class AuthService {
 
       // Decoding account from JSON.
       Account account = Account.fromJson(json.decode(response.body));
+
+      // Saving account details to storage.
+      _syncAccountToOfflineDb(account);
 
       // Returning account.
       return account;
@@ -175,7 +182,7 @@ class AuthService {
    * Service Implementation account login.
    * @param registerAccountDto DTO Implementation for account login.
    */
-  Future<void> loginAccount(
+  Future<Account> loginAccount(
     LoginAccountDto loginAccountDto,
   ) async {
     try {
@@ -219,6 +226,8 @@ class AuthService {
       String token = json.decode(response.body)['token'];
 
       await _firebaseAuth.signInWithCustomToken(token);
+
+      return await getUser();
     } on SocketException {
       log.wtf("Dedicated Server Offline");
       throw GeneralException(
@@ -254,5 +263,14 @@ class AuthService {
         message: GeneralError.SOMETHING_WENT_WRONG,
       );
     }
+  }
+
+  /*
+   * Service implementation for saving user in offline storage.
+   */
+  void _syncAccountToOfflineDb(Account account) {
+    log.i("Saving account to Hive DB");
+    _accountDb.put(LOGGED_IN_USER, account);
+    log.i("Saved account to Hive DB");
   }
 }
