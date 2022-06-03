@@ -11,6 +11,7 @@ import 'package:sonic_flutter/enum/general_error.enum.dart';
 import 'package:sonic_flutter/exceptions/auth.exception.dart';
 import 'package:sonic_flutter/exceptions/general.exception.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
+import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:sonic_flutter/utils/display_snackbar.util.dart';
 import 'package:sonic_flutter/utils/image_picker.util.dart';
@@ -164,9 +165,14 @@ class _RegisterState extends State<Register> {
         imageUrl: _imageUrl,
       );
 
-      Account account = await _authService.registerAccount(registerAccountDto);
+      await _authService.registerAccount(registerAccountDto);
 
-      log.i(account.id);
+      displaySnackBar(
+        "Account successfully created.",
+        context,
+      );
+
+      Navigator.of(context).pushReplacementNamed(Login.route);
     } on AuthException catch (error) {
       displaySnackBar(
         authErrorStrings(error.message),
@@ -214,7 +220,7 @@ class _RegisterState extends State<Register> {
             child: Form(
               key: _formKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
@@ -328,6 +334,12 @@ class _RegisterState extends State<Register> {
                             );
                     },
                     child: const SizedBox(),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacementNamed(Login.route);
+                    },
+                    child: const Text('Already have an account? Log in here!'),
                   ),
                 ],
               ),
