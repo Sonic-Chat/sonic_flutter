@@ -20,10 +20,5 @@ Future<void> firebaseStartup() async {
     9099,
   );
 
-  await FirebaseStorage.instance.useStorageEmulator(
-    "localhost",
-    9199,
-  );
-
   log.i('Connected Firebase Emulators');
 }
