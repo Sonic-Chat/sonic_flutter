@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
+import 'package:sonic_flutter/pages/auth/register.page.dart';
 import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FA;
 import 'package:sonic_flutter/utils/logger.util.dart';
@@ -51,7 +52,7 @@ class _SplashState extends State<Splash> {
       _handleServerAuthStatus();
     } else {
       log.i("No Firebase User Found");
-      // Navigator.of(context).pushReplacementNamed(Auth.routeName);
+      Navigator.of(context).pushReplacementNamed(Register.route);
     }
   }
 
@@ -69,7 +70,7 @@ class _SplashState extends State<Splash> {
       log.e(exception.code, exception.code, exception.stackTrace);
     } else {
       log.e(error.toString(), error, stackTrace);
-      // Navigator.of(context).pushReplacementNamed(Auth.routeName);
+      Navigator.of(context).pushReplacementNamed(Register.route);
     }
   }
 
