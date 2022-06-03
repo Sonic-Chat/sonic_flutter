@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/services/auth.service.dart';
 
 class Providers extends StatelessWidget {
@@ -18,6 +19,9 @@ class Providers extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<AccountProvider>(
+          create: (context) => AccountProvider(),
+        ),
         Provider<AuthService>(
           create: (context) => AuthService(
             apiUrl: apiUrl,
