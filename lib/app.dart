@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/pages/auth/register.page.dart';
 import 'package:sonic_flutter/pages/home.page.dart';
 import 'package:sonic_flutter/pages/splash.page.dart';
@@ -19,6 +20,7 @@ class App extends StatelessWidget {
         Splash.route: (BuildContext context) => const Splash(),
         Home.route: (BuildContext context) => const Home(),
         Register.route: (BuildContext context) => const Register(),
+        Login.route: (BuildContext context) => const Login(),
       },
       initialRoute: Splash.route,
     );

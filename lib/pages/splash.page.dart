@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
-import 'package:sonic_flutter/pages/auth/register.page.dart';
+import 'package:sonic_flutter/pages/auth/login.page.dart';
+import 'package:sonic_flutter/pages/home.page.dart';
+import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FA;
 import 'package:sonic_flutter/utils/logger.util.dart';
@@ -52,7 +54,7 @@ class _SplashState extends State<Splash> {
       _handleServerAuthStatus();
     } else {
       log.i("No Firebase User Found");
-      Navigator.of(context).pushReplacementNamed(Register.route);
+      Navigator.of(context).pushReplacementNamed(Login.route);
     }
   }
 
@@ -70,16 +72,15 @@ class _SplashState extends State<Splash> {
       log.e(exception.code, exception.code, exception.stackTrace);
     } else {
       log.e(error.toString(), error, stackTrace);
-      Navigator.of(context).pushReplacementNamed(Register.route);
+      Navigator.of(context).pushReplacementNamed(Login.route);
     }
   }
 
-  FutureOr<Null> _handleServerAuthSuccess(Account account) {
+  FutureOr<void> _handleServerAuthSuccess(Account account) {
     log.i("Server Logged In User");
-    print(account);
 
-    // Provider.of<AuthProvider>(context, listen: false).saveUser(user);
-    // Navigator.of(context).pushReplacementNamed(Home.routeName);
+    Provider.of<AccountProvider>(context, listen: false).saveAccount(account);
+    Navigator.of(context).pushReplacementNamed(Home.route);
   }
 
   _handleFirebaseStreamError(error, stackTrace) {
