@@ -16,11 +16,15 @@ class RegisterAccountDto {
   @JsonKey(defaultValue: "")
   final String username;
 
+  @JsonKey(defaultValue: "")
+  final String imageUrl;
+
   RegisterAccountDto({
     required this.email,
     required this.password,
     required this.fullName,
     required this.username,
+    required this.imageUrl,
   });
 
   factory RegisterAccountDto.fromJson(Map<String, dynamic> json) =>

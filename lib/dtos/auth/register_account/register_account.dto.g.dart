@@ -12,6 +12,7 @@ RegisterAccountDto _$RegisterAccountDtoFromJson(Map<String, dynamic> json) =>
       password: json['password'] as String? ?? '',
       fullName: json['fullName'] as String? ?? '',
       username: json['username'] as String? ?? '',
+      imageUrl: json['imageUrl'] as String? ?? '',
     );
 
 Map<String, dynamic> _$RegisterAccountDtoToJson(RegisterAccountDto instance) =>
@@ -20,4 +21,5 @@ Map<String, dynamic> _$RegisterAccountDtoToJson(RegisterAccountDto instance) =>
       'password': instance.password,
       'fullName': instance.fullName,
       'username': instance.username,
+      'imageUrl': instance.imageUrl,
     };
