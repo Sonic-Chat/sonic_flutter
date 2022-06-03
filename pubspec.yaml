@@ -21,6 +21,10 @@ dependencies:
   http: ^0.13.4
   json_annotation: ^4.5.0
   form_field_validator: ^1.1.0
+  flutter_offline: ^2.1.0
+  cached_network_image: ^3.2.1
+  image_picker: ^0.8.5+3
+  uuid: ^3.0.6
 
 dev_dependencies:
   flutter_test:
