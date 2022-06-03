@@ -18,6 +18,13 @@ dependencies:
   hive: ^2.2.1
   hive_flutter: ^1.1.0
   logger: ^1.1.0
+  http: ^0.13.4
+  json_annotation: ^4.5.0
+  form_field_validator: ^1.1.0
+  flutter_offline: ^2.1.0
+  cached_network_image: ^3.2.1
+  image_picker: ^0.8.5+3
+  uuid: ^3.0.6
 
 dev_dependencies:
   flutter_test:
@@ -25,6 +32,17 @@ dev_dependencies:
   flutter_lints: ^1.0.0
   hive_generator: ^1.1.3
   build_runner: ^2.1.11
+  json_serializable: ^6.2.0
+  flutter_launcher_icons: "^0.9.2"
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/img/app-icon.png"
+  remove_alpha_ios: true
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/img/
+    - assets/img/app-icon.png
