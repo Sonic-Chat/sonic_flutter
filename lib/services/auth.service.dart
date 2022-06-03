@@ -65,8 +65,9 @@ class AuthService {
       if (response.statusCode >= 400 && response.statusCode < 500) {
         Map<String, dynamic> body = json.decode(response.body);
         throw AuthException(
-            message: AuthError.values
-                .firstWhere((error) => error.toString() == body['message']));
+            message: AuthError.values.firstWhere((error) =>
+                error.toString().substring("AuthError.".length) ==
+                body['message']));
       } else if (response.statusCode >= 500) {
         Map<String, dynamic> body = json.decode(response.body);
 
@@ -166,8 +167,9 @@ class AuthService {
       if (response.statusCode >= 400 && response.statusCode < 500) {
         Map<String, dynamic> body = json.decode(response.body);
         throw AuthException(
-            message: AuthError.values
-                .firstWhere((error) => error.toString() == body['message']));
+            message: AuthError.values.firstWhere((error) =>
+                error.toString().substring("AuthError.".length) ==
+                body['message']));
       } else if (response.statusCode >= 500) {
         Map<String, dynamic> body = json.decode(response.body);
 
@@ -237,8 +239,9 @@ class AuthService {
       if (response.statusCode >= 400 && response.statusCode < 500) {
         Map<String, dynamic> body = json.decode(response.body);
         throw AuthException(
-            message: AuthError.values
-                .firstWhere((error) => error.toString() == body['message']));
+            message: AuthError.values.firstWhere((error) =>
+                error.toString().substring("AuthError.".length) ==
+                body['message']));
       } else if (response.statusCode >= 500) {
         Map<String, dynamic> body = json.decode(response.body);
 
