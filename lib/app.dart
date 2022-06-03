@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sonic_flutter/pages/home.page.dart';
+import 'package:sonic_flutter/pages/splash.page.dart';
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
@@ -14,9 +15,10 @@ class App extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       routes: {
+        Splash.route: (BuildContext context) => const Splash(),
         Home.route: (BuildContext context) => const Home(),
       },
-      initialRoute: Home.route,
+      initialRoute: Splash.route,
     );
   }
 }
