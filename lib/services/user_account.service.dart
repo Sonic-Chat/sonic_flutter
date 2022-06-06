@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart' as FA;
 import 'package:sonic_flutter/dtos/account/update_account/update_account.dto.dart';
+import 'package:sonic_flutter/dtos/credentials/delete_credentials/delete_credentials.dto.dart';
 import 'package:sonic_flutter/enum/auth_error.enum.dart';
 import 'package:sonic_flutter/enum/general_error.enum.dart';
 import 'package:sonic_flutter/exceptions/auth.exception.dart';
@@ -118,7 +119,7 @@ class UserAccountService {
   /*
    * Service Implementation account delete.
    */
-  Future<void> deleteAccount() async {
+  Future<void> deleteAccount(DeleteCredentialsDto deleteCredentialsDto) async {
     try {
       // Get the logged in user details.
       FA.User? firebaseUser = _firebaseAuth.currentUser;
@@ -142,11 +143,15 @@ class UserAccountService {
         "Authorization": "Bearer $firebaseAuthToken",
       };
 
+      // Preparing body for the request.
+      String body = json.encode(deleteCredentialsDto.toJson());
+
       // Updating account on the server.
       http.Response response = await http
           .delete(
             url,
             headers: headers,
+            body: body,
           )
           .timeout(const Duration(seconds: 10));
 
