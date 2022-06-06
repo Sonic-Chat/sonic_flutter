@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sonic_flutter/pages/account/account_update.page.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -14,9 +15,17 @@ class Home extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Text(
+          children: <Widget>[
+            const Text(
               'Hello from Home Page',
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  AccountUpdate.route,
+                );
+              },
+              child: const Text('Update Account'),
             ),
           ],
         ),

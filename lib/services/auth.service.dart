@@ -82,7 +82,7 @@ class AuthService {
       Account account = Account.fromJson(json.decode(response.body));
 
       // Saving account details to storage.
-      _syncAccountToOfflineDb(account);
+      syncAccountToOfflineDb(account);
 
       // Returning account.
       return account;
@@ -298,7 +298,7 @@ class AuthService {
   /*
    * Service implementation for saving user in offline storage.
    */
-  void _syncAccountToOfflineDb(Account account) {
+  void syncAccountToOfflineDb(Account account) {
     log.i("Saving account to Hive DB");
     _accountDb.put(LOGGED_IN_USER, account);
     log.i("Saved account to Hive DB");

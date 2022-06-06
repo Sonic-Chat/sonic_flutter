@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sonic_flutter/pages/account/account_update.page.dart';
 import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/pages/auth/register.page.dart';
 import 'package:sonic_flutter/pages/home.page.dart';
@@ -18,9 +19,10 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         Splash.route: (BuildContext context) => const Splash(),
-        Home.route: (BuildContext context) => const Home(),
         Register.route: (BuildContext context) => const Register(),
         Login.route: (BuildContext context) => const Login(),
+        Home.route: (BuildContext context) => const Home(),
+        AccountUpdate.route: (BuildContext context) => const AccountUpdate(),
       },
       initialRoute: Splash.route,
     );
