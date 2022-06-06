@@ -114,4 +114,92 @@ class UserAccountService {
       }
     }
   }
+
+  /*
+   * Service Implementation account delete.
+   */
+  Future<void> deleteAccount() async {
+    try {
+      // Get the logged in user details.
+      FA.User? firebaseUser = _firebaseAuth.currentUser;
+
+      // Check if user is not null.
+      if (firebaseUser == null) {
+        // If there is no user logged is using firebase, throw an exception.
+        throw AuthException(
+          message: AuthError.UNAUTHENTICATED,
+        );
+      }
+      // Fetch the ID token for the user.
+      String firebaseAuthToken =
+          await _firebaseAuth.currentUser!.getIdToken(true);
+
+      // Preparing the URL for the server request.
+      Uri url = Uri.parse("$apiUrl/api/v1/account");
+
+      // Preparing the headers for the request.
+      Map<String, String> headers = {
+        "Authorization": "Bearer $firebaseAuthToken",
+      };
+
+      // Updating account on the server.
+      http.Response response = await http
+          .delete(
+            url,
+            headers: headers,
+          )
+          .timeout(const Duration(seconds: 10));
+
+      // Handling Errors.
+      if (response.statusCode >= 400 && response.statusCode < 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+        throw AuthException(
+            message: AuthError.values.firstWhere((error) =>
+                error.toString().substring("AuthError.".length) ==
+                body['message']));
+      } else if (response.statusCode >= 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+
+        log.e(body["message"]);
+
+        throw GeneralException(
+          message: GeneralError.SOMETHING_WENT_WRONG,
+        );
+      }
+
+      // Saving dummy account details to device.
+      authService.syncAccountToOfflineDb(
+        Account(
+          id: '',
+          imageUrl: '',
+          fullName: '',
+          status: '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      );
+
+      // Logging out of the account.
+      await authService.logOut();
+    } on SocketException {
+      log.wtf("Dedicated Server Offline");
+      throw GeneralException(
+        message: GeneralError.OFFLINE,
+      );
+    } on TimeoutException {
+      log.wtf("Dedicated Server Offline");
+      throw GeneralException(
+        message: GeneralError.OFFLINE,
+      );
+    } on FA.FirebaseAuthException catch (error) {
+      if (error.code == "network-request-failed") {
+        log.wtf("Firebase Server Offline");
+        throw GeneralException(
+          message: GeneralError.OFFLINE,
+        );
+      } else {
+        rethrow;
+      }
+    }
+  }
 }
