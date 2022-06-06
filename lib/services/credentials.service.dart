@@ -84,6 +84,10 @@ class CredentialsService {
         );
       }
 
+      // Re-authenticate with an updated token.
+      String updatedToken = json.decode(response.body)['token'];
+      await _firebaseAuth.signInWithCustomToken(updatedToken);
+
       // Saving updated account details to device.
       await authService.getUser();
     } on SocketException {
