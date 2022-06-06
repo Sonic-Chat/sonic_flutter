@@ -4,7 +4,7 @@ import 'package:sonic_flutter/dtos/credentials/update_credentials.dto.dart';
 part 'update_email.dto.g.dart';
 
 @JsonSerializable()
-class UpdateEmailDto extends UpdateCredentialsDto {
+class UpdateEmailDto implements UpdateCredentialsDto {
   @JsonKey(defaultValue: "")
   final String email;
 
@@ -19,5 +19,6 @@ class UpdateEmailDto extends UpdateCredentialsDto {
   factory UpdateEmailDto.fromJson(Map<String, dynamic> json) =>
       _$UpdateEmailDtoFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$UpdateEmailDtoToJson(this);
 }

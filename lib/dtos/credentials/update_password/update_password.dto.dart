@@ -4,7 +4,7 @@ import 'package:sonic_flutter/dtos/credentials/update_credentials.dto.dart';
 part 'update_password.dto.g.dart';
 
 @JsonSerializable()
-class UpdatePasswordDto extends UpdateCredentialsDto {
+class UpdatePasswordDto implements UpdateCredentialsDto {
   @JsonKey(defaultValue: "")
   final String oldPassword;
 
@@ -19,5 +19,6 @@ class UpdatePasswordDto extends UpdateCredentialsDto {
   factory UpdatePasswordDto.fromJson(Map<String, dynamic> json) =>
       _$UpdatePasswordDtoFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$UpdatePasswordDtoToJson(this);
 }

@@ -1,1 +1,3 @@
-class UpdateCredentialsDto {}
+class UpdateCredentialsDto {
+  Map<String, dynamic> toJson() => {};
+}
