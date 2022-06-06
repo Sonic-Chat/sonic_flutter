@@ -1,10 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sonic_flutter/dtos/credentials/update_credentials.dto.dart';
 
 part 'delete_credentials.dto.g.dart';
 
 @JsonSerializable()
-class DeleteCredentialsDto implements UpdateCredentialsDto {\
+class DeleteCredentialsDto {
 
   @JsonKey(defaultValue: "")
   final String password;
