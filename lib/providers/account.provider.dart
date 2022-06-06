@@ -23,7 +23,7 @@ class AccountProvider with ChangeNotifier {
   /*
    * Remove account details from memory.
    */
-  void removeUser() {
+  void removeAccount() {
     _account = null;
     notifyListeners();
   }
