@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sonic_flutter/widgets/user_account/update_email.widget.dart';
+import 'package:sonic_flutter/widgets/user_account/update_password.widget.dart';
 import 'package:sonic_flutter/widgets/user_account/update_profile.widget.dart';
 
 class AccountUpdate extends StatelessWidget {
@@ -63,7 +64,7 @@ class AccountUpdate extends StatelessWidget {
           children: [
             ProfileUpdateTab(),
             EmailUpdateTab(),
-            ProfileUpdateTab(),
+            PasswordUpdateTab(),
             ProfileUpdateTab(),
           ],
         ),
