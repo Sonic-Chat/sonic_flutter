@@ -52,6 +52,7 @@ class _ProvidersState extends State<Providers> {
         Provider<CredentialsService>(
           create: (context) => CredentialsService(
             apiUrl: widget.apiUrl,
+            rawApiUrl: widget.rawApiUrl,
             authService: _authService,
           ),
         ),
