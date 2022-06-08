@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
+import 'package:sonic_flutter/models/public_credentials/public_credentials.model.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 
 Future<void> hiveStartup() async {
@@ -11,9 +12,11 @@ Future<void> hiveStartup() async {
 
   log.i("Registering Hive Adaptors");
   Hive.registerAdapter<Account>(AccountAdapter());
+  Hive.registerAdapter<PublicCredentials>(PublicCredentialsAdapter());
   log.i("Registered Hive Adaptors");
 
   log.i("Opening Hive Boxes");
   await Hive.openBox<Account>(LOGGED_IN_USER_BOX);
+  await Hive.openBox<PublicCredentials>(USERS_BOX);
   log.i("Opened Hive Boxes");
 }
