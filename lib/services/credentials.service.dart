@@ -156,7 +156,7 @@ class CredentialsService {
 
       // Prepare URL and the auth header.
       Uri url = Uri.parse(
-          "$apiUrl/api/v1/credentials/filter/:${searchCredentialsDto.search}");
+          "$apiUrl/api/v1/credentials/filter/${searchCredentialsDto.search == "" ? "empty" : searchCredentialsDto.search}");
 
       // Preparing the headers for the request.
       Map<String, String> headers = {
@@ -174,6 +174,7 @@ class CredentialsService {
       // Handling Errors.
       if (response.statusCode >= 400 && response.statusCode < 500) {
         Map<String, dynamic> body = json.decode(response.body);
+        print(body);
         throw AuthException(
             message: AuthError.values.firstWhere((error) =>
                 error.toString().substring("AuthError.".length) ==
