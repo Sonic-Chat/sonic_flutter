@@ -305,7 +305,7 @@ class AuthService {
   }
 
   /*
-   * Service implementation for saving user in offline storage.
+   * Service implementation for fetching user from offline storage.
    */
   Account? _fetchAccountFromOfflineDb() {
     log.i("Fetching account from Hive DB");

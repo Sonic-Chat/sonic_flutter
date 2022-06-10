@@ -2,29 +2,228 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart' as FA;
+import 'package:sonic_flutter/constants/hive.constant.dart';
 import 'package:sonic_flutter/dtos/credentials/delete_credentials/delete_credentials.dto.dart';
+import 'package:sonic_flutter/dtos/credentials/fetch_credentials/fetch_credentials.dto.dart';
+import 'package:sonic_flutter/dtos/credentials/search_credentials/search_credentials.dto.dart';
 import 'package:sonic_flutter/dtos/credentials/update_credentials.dto.dart';
 import 'package:sonic_flutter/enum/auth_error.enum.dart';
 import 'package:sonic_flutter/enum/general_error.enum.dart';
 import 'package:sonic_flutter/exceptions/auth.exception.dart';
 import 'package:sonic_flutter/exceptions/general.exception.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
+import 'package:sonic_flutter/models/public_credentials/public_credentials.model.dart';
 import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 
 class CredentialsService {
   final String apiUrl;
+  final String rawApiUrl;
 
   final FA.FirebaseAuth _firebaseAuth = FA.FirebaseAuth.instance;
 
   final AuthService authService;
 
+  final Box<PublicCredentials> _credentialsBox =
+      Hive.box<PublicCredentials>(USERS_BOX);
+
   CredentialsService({
     required this.apiUrl,
+    required this.rawApiUrl,
     required this.authService,
   });
+
+  /*
+   * Service Implementation for fetching user details.
+   * @param fetchCredentialsDto DTO Implementation for fetching user details.
+   */
+  Future<PublicCredentials> fetchCredentials(
+    FetchCredentialsDto fetchCredentialsDto,
+  ) async {
+    try {
+      // Get the logged in user details.
+      FA.User? firebaseUser = _firebaseAuth.currentUser;
+
+      // Check if user is not null.
+      if (firebaseUser == null) {
+        // If there is no user logged is using firebase, throw an exception.
+        throw AuthException(
+          message: AuthError.UNAUTHENTICATED,
+        );
+      }
+      // Fetch the ID token for the user.
+      String firebaseAuthToken =
+          await _firebaseAuth.currentUser!.getIdToken(true);
+
+      // Prepare URL and the auth header.
+      Uri url = Uri.http(
+        rawApiUrl,
+        'api/v1/credentials',
+        fetchCredentialsDto.toJson(),
+      );
+
+      // Preparing the headers for the request.
+      Map<String, String> headers = {
+        "Authorization": "Bearer $firebaseAuthToken",
+      };
+
+      // Fetch user details from the server
+      http.Response response = await http
+          .get(
+            url,
+            headers: headers,
+          )
+          .timeout(const Duration(seconds: 10));
+
+      // Handling Errors.
+      if (response.statusCode >= 400 && response.statusCode < 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+        throw AuthException(
+            message: AuthError.values.firstWhere((error) =>
+                error.toString().substring("AuthError.".length) ==
+                body['message']));
+      } else if (response.statusCode >= 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+
+        log.e(body["message"]);
+
+        throw GeneralException(
+          message: GeneralError.SOMETHING_WENT_WRONG,
+        );
+      }
+
+      // Decoding credentials from JSON.
+      PublicCredentials publicCredentials =
+          PublicCredentials.fromJson(json.decode(response.body));
+
+      // Saving credentials to storage.
+      _syncPublicCredentialsToOfflineDb(publicCredentials);
+
+      // Returning credentials.
+      return publicCredentials;
+    } on SocketException {
+      log.wtf("Dedicated Server Offline");
+
+      // Fetch credentials from Offline Storage.
+      return _fetchPublicCredentialsFromOfflineDb(
+        fetchCredentialsDto.accountId,
+      );
+    } on TimeoutException {
+      log.wtf("Dedicated Server Offline");
+
+      // Fetch credentials from Offline Storage.
+      return _fetchPublicCredentialsFromOfflineDb(
+        fetchCredentialsDto.accountId,
+      );
+    } on FA.FirebaseAuthException catch (error) {
+      if (error.code == "network-request-failed") {
+        log.wtf("Firebase Server Offline");
+
+        /// Fetch credentials from Offline Storage.
+        return _fetchPublicCredentialsFromOfflineDb(
+          fetchCredentialsDto.accountId,
+        );
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  /*
+   * Service Implementation for searching users.
+   * @param searchCredentialsDto DTO Implementation for searching users.
+   */
+  Future<List<PublicCredentials>> searchCredentials(
+    SearchCredentialsDto searchCredentialsDto,
+  ) async {
+    try {
+      // Get the logged in user details.
+      FA.User? firebaseUser = _firebaseAuth.currentUser;
+
+      // Check if user is not null.
+      if (firebaseUser == null) {
+        // If there is no user logged is using firebase, throw an exception.
+        throw AuthException(
+          message: AuthError.UNAUTHENTICATED,
+        );
+      }
+      // Fetch the ID token for the user.
+      String firebaseAuthToken =
+          await _firebaseAuth.currentUser!.getIdToken(true);
+
+      // Prepare URL and the auth header.
+      Uri url = Uri.parse(
+          "$apiUrl/api/v1/credentials/filter/${searchCredentialsDto.search == "" ? "empty" : searchCredentialsDto.search}");
+
+      // Preparing the headers for the request.
+      Map<String, String> headers = {
+        "Authorization": "Bearer $firebaseAuthToken",
+      };
+
+      // Search for users on the server
+      http.Response response = await http
+          .get(
+            url,
+            headers: headers,
+          )
+          .timeout(const Duration(seconds: 10));
+
+      // Handling Errors.
+      if (response.statusCode >= 400 && response.statusCode < 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+        print(body);
+        throw AuthException(
+            message: AuthError.values.firstWhere((error) =>
+                error.toString().substring("AuthError.".length) ==
+                body['message']));
+      } else if (response.statusCode >= 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+
+        log.e(body["message"]);
+
+        throw GeneralException(
+          message: GeneralError.SOMETHING_WENT_WRONG,
+        );
+      }
+
+      // Getting list of public credentials.
+      List<dynamic> jsonResponse = json.decode(response.body);
+      List<PublicCredentials> credentials = jsonResponse
+          .map((credentialsJson) => PublicCredentials.fromJson(credentialsJson))
+          .toList();
+
+      // Return results.
+      return credentials;
+    } on SocketException {
+      log.wtf("Dedicated Server Offline");
+
+      // Throw offline error.
+      throw GeneralException(
+        message: GeneralError.OFFLINE,
+      );
+    } on TimeoutException {
+      log.wtf("Dedicated Server Offline");
+
+      // Throw offline error.
+      throw GeneralException(
+        message: GeneralError.OFFLINE,
+      );
+    } on FA.FirebaseAuthException catch (error) {
+      if (error.code == "network-request-failed") {
+        log.wtf("Firebase Server Offline");
+
+        // Throw offline error.
+        throw GeneralException(
+          message: GeneralError.OFFLINE,
+        );
+      } else {
+        rethrow;
+      }
+    }
+  }
 
   /*
    * Service Implementation for credentials update.
@@ -206,5 +405,36 @@ class CredentialsService {
         rethrow;
       }
     }
+  }
+
+  /*
+   * Service implementation for saving credentials in offline storage.
+   */
+  void _syncPublicCredentialsToOfflineDb(PublicCredentials publicCredentials) {
+    log.i("Saving credentials ${publicCredentials.account.id} to Hive DB");
+    _credentialsBox.put(publicCredentials.account.id, publicCredentials);
+    log.i("Saved credentials to Hive DB");
+  }
+
+  /*
+   * Service implementation for fetching credentials from offline storage.
+   */
+  PublicCredentials _fetchPublicCredentialsFromOfflineDb(String accountId) {
+    log.i("Fetching credentials $accountId from Hive DB");
+    return _credentialsBox.get(
+      accountId,
+      defaultValue: PublicCredentials(
+        id: '',
+        username: '',
+        account: Account(
+          id: '',
+          imageUrl: '',
+          fullName: '',
+          status: '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      ),
+    )!;
   }
 }

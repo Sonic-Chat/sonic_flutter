@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sonic_flutter/pages/account/account_update.page.dart';
+import 'package:sonic_flutter/pages/account/search.page.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -26,6 +27,14 @@ class Home extends StatelessWidget {
                 );
               },
               child: const Text('Update Account'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  Search.route,
+                );
+              },
+              child: const Text('Search'),
             ),
           ],
         ),
