@@ -4,15 +4,15 @@ import 'package:sonic_flutter/enum/friend_status.enum.dart';
 part 'fetch_friend_request.dto.g.dart';
 
 @JsonSerializable()
-class FetchFriendRequestDto {
+class FetchFriendRequestsDto {
   final FriendStatus? status;
 
-  FetchFriendRequestDto({
+  FetchFriendRequestsDto({
     required this.status,
   });
 
-  factory FetchFriendRequestDto.fromJson(Map<String, dynamic> json) =>
-      _$FetchFriendRequestDtoFromJson(json);
+  factory FetchFriendRequestsDto.fromJson(Map<String, dynamic> json) =>
+      _$FetchFriendRequestsDtoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$FetchFriendRequestDtoToJson(this);
+  Map<String, dynamic> toJson() => _$FetchFriendRequestsDtoToJson(this);
 }

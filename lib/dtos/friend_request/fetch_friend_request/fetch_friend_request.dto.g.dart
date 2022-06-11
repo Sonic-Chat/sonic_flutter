@@ -6,14 +6,14 @@ part of 'fetch_friend_request.dto.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FetchFriendRequestDto _$FetchFriendRequestDtoFromJson(
+FetchFriendRequestsDto _$FetchFriendRequestsDtoFromJson(
         Map<String, dynamic> json) =>
-    FetchFriendRequestDto(
+    FetchFriendRequestsDto(
       status: $enumDecodeNullable(_$FriendStatusEnumMap, json['status']),
     );
 
-Map<String, dynamic> _$FetchFriendRequestDtoToJson(
-        FetchFriendRequestDto instance) =>
+Map<String, dynamic> _$FetchFriendRequestsDtoToJson(
+        FetchFriendRequestsDto instance) =>
     <String, dynamic>{
       'status': _$FriendStatusEnumMap[instance.status],
     };

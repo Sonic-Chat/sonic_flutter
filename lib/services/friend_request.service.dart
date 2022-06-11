@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart' as FA;
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:sonic_flutter/constants/hive.constant.dart';
-import 'package:sonic_flutter/dtos/credentials/fetch_credentials/fetch_credentials.dto.dart';
 import 'package:sonic_flutter/dtos/friend_request/fetch_friend_request/fetch_friend_request.dto.dart';
 import 'package:sonic_flutter/enum/auth_error.enum.dart';
 import 'package:sonic_flutter/enum/general_error.enum.dart';
@@ -33,7 +32,7 @@ class FriendRequestService {
    * Service Implementation for fetching friend requests.
    */
   Future<List<FriendRequest>> fetchFriendRequests(
-    FetchFriendRequestDto fetchFriendRequestDto,
+    FetchFriendRequestsDto fetchFriendRequestDto,
   ) async {
     try {
       // Get the logged in user details.
