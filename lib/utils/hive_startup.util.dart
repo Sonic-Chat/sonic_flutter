@@ -20,5 +20,6 @@ Future<void> hiveStartup() async {
   log.i("Opening Hive Boxes");
   await Hive.openBox<Account>(LOGGED_IN_USER_BOX);
   await Hive.openBox<PublicCredentials>(USERS_BOX);
+  await Hive.openBox<List<dynamic>>(FRIEND_REQUESTS_BOX);
   log.i("Opened Hive Boxes");
 }
