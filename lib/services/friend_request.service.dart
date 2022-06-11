@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart' as FA;
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:sonic_flutter/constants/hive.constant.dart';
-import 'package:sonic_flutter/dtos/friend_request/fetch_friend_request/fetch_friend_request.dto.dart';
+import 'package:sonic_flutter/dtos/friend_request/fetch_friend_requests/fetch_friend_requests.dto.dart';
 import 'package:sonic_flutter/enum/auth_error.enum.dart';
 import 'package:sonic_flutter/enum/general_error.enum.dart';
 import 'package:sonic_flutter/exceptions/auth.exception.dart';

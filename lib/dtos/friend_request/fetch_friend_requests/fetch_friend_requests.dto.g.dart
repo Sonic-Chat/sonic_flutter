@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'fetch_friend_request.dto.dart';
+part of 'fetch_friend_requests.dto.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
