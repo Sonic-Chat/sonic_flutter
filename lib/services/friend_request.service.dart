@@ -6,10 +6,13 @@ import 'package:firebase_auth/firebase_auth.dart' as FA;
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:sonic_flutter/constants/hive.constant.dart';
+import 'package:sonic_flutter/dtos/friend_request/fetch_friend_request/fetch_friend_request.dto.dart';
 import 'package:sonic_flutter/dtos/friend_request/fetch_friend_requests/fetch_friend_requests.dto.dart';
 import 'package:sonic_flutter/enum/auth_error.enum.dart';
+import 'package:sonic_flutter/enum/friends_error.enum.dart';
 import 'package:sonic_flutter/enum/general_error.enum.dart';
 import 'package:sonic_flutter/exceptions/auth.exception.dart';
+import 'package:sonic_flutter/exceptions/friend_request.exception.dart';
 import 'package:sonic_flutter/exceptions/general.exception.dart';
 import 'package:sonic_flutter/models/friend_request/friend_request.model.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
@@ -115,6 +118,95 @@ class FriendRequestService {
 
         // Fetch requests from Offline Storage.
         return fetchRequestsFromOfflineDb();
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  /*
+   * Service Implementation for fetching friend request for a particular account.
+   */
+  Future<FriendRequest> fetchFriendRequest(
+    FetchFriendRequestDto fetchFriendRequestDto,
+  ) async {
+    try {
+      // Get the logged in user details.
+      FA.User? firebaseUser = _firebaseAuth.currentUser;
+
+      // Check if user is not null.
+      if (firebaseUser == null) {
+        // If there is no user logged is using firebase, throw an exception.
+        throw AuthException(
+          message: AuthError.UNAUTHENTICATED,
+        );
+      }
+      // Fetch the ID token for the user.
+      String firebaseAuthToken =
+          await _firebaseAuth.currentUser!.getIdToken(true);
+
+      // Prepare URL and the auth header.
+      Uri url = Uri.http(
+        rawApiUrl,
+        'api/v1/friends/account',
+        fetchFriendRequestDto.toJson(),
+      );
+
+      // Preparing the headers for the request.
+      Map<String, String> headers = {
+        "Authorization": "Bearer $firebaseAuthToken",
+      };
+
+      // Fetch requests from the server
+      http.Response response = await http
+          .get(
+            url,
+            headers: headers,
+          )
+          .timeout(const Duration(seconds: 10));
+
+      // Handling Errors.
+      if (response.statusCode >= 400 && response.statusCode < 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+        throw FriendRequestException(
+            message: FriendError.values.firstWhere((error) =>
+                error.toString().substring("FriendError.".length) ==
+                body['message']));
+      } else if (response.statusCode >= 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+
+        log.e(body["message"]);
+
+        throw GeneralException(
+          message: GeneralError.SOMETHING_WENT_WRONG,
+        );
+      }
+
+      // Decoding requests from JSON.
+      FriendRequest request =
+          FriendRequest.fromJson(json.decode(response.body));
+
+      // Returning requests.
+      return request;
+    } on SocketException {
+      log.wtf("Dedicated Server Offline");
+
+      throw GeneralException(
+        message: GeneralError.OFFLINE,
+      );
+    } on TimeoutException {
+      log.wtf("Dedicated Server Offline");
+
+      throw GeneralException(
+        message: GeneralError.OFFLINE,
+      );
+    } on FA.FirebaseAuthException catch (error) {
+      if (error.code == "network-request-failed") {
+        log.wtf("Firebase Server Offline");
+
+        throw GeneralException(
+          message: GeneralError.OFFLINE,
+        );
       } else {
         rethrow;
       }
