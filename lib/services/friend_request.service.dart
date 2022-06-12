@@ -101,7 +101,12 @@ class FriendRequestService {
           .toList();
 
       // Saving requests to storage.
-      _syncRequestsToOfflineDb(requests);
+      _syncRequestsToOfflineDb(
+        fetchFriendRequestDto.status != null
+            ? fetchFriendRequestDto.status.toString()
+            : LOGGED_IN_USER_REQUESTS,
+        requests,
+      );
 
       // Returning requests.
       return requests;
@@ -109,18 +114,30 @@ class FriendRequestService {
       log.wtf("Dedicated Server Offline");
 
       // Fetch requests from Offline Storage.
-      return fetchRequestsFromOfflineDb();
+      return fetchRequestsFromOfflineDb(
+        fetchFriendRequestDto.status != null
+            ? fetchFriendRequestDto.status.toString()
+            : LOGGED_IN_USER_REQUESTS,
+      );
     } on TimeoutException {
       log.wtf("Dedicated Server Offline");
 
       // Fetch requests from Offline Storage.
-      return fetchRequestsFromOfflineDb();
+      return fetchRequestsFromOfflineDb(
+        fetchFriendRequestDto.status != null
+            ? fetchFriendRequestDto.status.toString()
+            : LOGGED_IN_USER_REQUESTS,
+      );
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
         log.wtf("Firebase Server Offline");
 
         // Fetch requests from Offline Storage.
-        return fetchRequestsFromOfflineDb();
+        return fetchRequestsFromOfflineDb(
+          fetchFriendRequestDto.status != null
+              ? fetchFriendRequestDto.status.toString()
+              : LOGGED_IN_USER_REQUESTS,
+        );
       } else {
         rethrow;
       }
@@ -506,18 +523,17 @@ class FriendRequestService {
   /*
    * Service implementation for saving requests in offline storage.
    */
-  void _syncRequestsToOfflineDb(List<FriendRequest> requests) {
+  void _syncRequestsToOfflineDb(String key, List<FriendRequest> requests) {
     log.i("Saving requests to Hive DB");
-    _friendRequestDb.put(LOGGED_IN_USER_REQUESTS, requests);
+    _friendRequestDb.put(key, requests);
     log.i("Saved requests to Hive DB");
   }
 
   /*
    * Service implementation for fetching requests from offline storage.
    */
-  List<FriendRequest> fetchRequestsFromOfflineDb() {
+  List<FriendRequest> fetchRequestsFromOfflineDb(String key) {
     log.i("Fetching requests from Hive DB");
-    return _friendRequestDb
-        .get(LOGGED_IN_USER_REQUESTS, defaultValue: [])!.cast<FriendRequest>();
+    return _friendRequestDb.get(key, defaultValue: [])!.cast<FriendRequest>();
   }
 }
