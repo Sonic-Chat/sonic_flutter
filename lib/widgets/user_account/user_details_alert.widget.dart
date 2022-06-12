@@ -246,11 +246,34 @@ class _UserDetailsAlertState extends State<UserDetailsAlert> {
                           },
                           child: const SizedBox(),
                         )
-                      : ElevatedButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'Unfriend',
-                          ),
+                      : OfflineBuilder(
+                          connectivityBuilder: (BuildContext context,
+                              ConnectivityResult value, Widget child) {
+                            bool connected = value != ConnectivityResult.none;
+
+                            return connected
+                                ? LoadingIconButton(
+                                    connected: true,
+                                    loading: _loading,
+                                    onFormSubmit: _cancelFriendRequest,
+                                    text: 'Unfriend',
+                                    loadingText: 'Unfriending',
+                                    icon: const Icon(
+                                      Icons.person,
+                                    ),
+                                  )
+                                : LoadingIconButton(
+                                    connected: false,
+                                    loading: _loading,
+                                    onFormSubmit: _cancelFriendRequest,
+                                    text: 'Unfriend',
+                                    loadingText: 'Unfriending',
+                                    icon: const Icon(
+                                      Icons.person,
+                                    ),
+                                  );
+                          },
+                          child: const SizedBox(),
                         ),
             ),
           ],
