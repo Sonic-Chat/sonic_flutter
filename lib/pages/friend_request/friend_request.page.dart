@@ -54,7 +54,9 @@ class FriendRequest extends StatelessWidget {
             const FriendListTab(
               status: FriendStatus.ACCEPTED,
             ),
-            Container(),
+            const FriendListTab(
+              status: FriendStatus.REQUESTED,
+            ),
             Container(),
           ],
         ),
