@@ -14,10 +14,12 @@ import 'package:sonic_flutter/widgets/user_account/user_list_item.widget.dart';
 
 class UserFriendListItem extends StatefulWidget {
   final FriendRequest friendRequest;
+  final bool disableAlert;
 
   const UserFriendListItem({
     Key? key,
     required this.friendRequest,
+    this.disableAlert = false,
   }) : super(key: key);
 
   @override
@@ -92,6 +94,7 @@ class _UserFriendListItemState extends State<UserFriendListItem> {
   Widget _buildListItem() {
     return UserListItem(
       publicCredentials: _publicCredentials!,
+      disableAlert: widget.disableAlert,
     );
   }
 

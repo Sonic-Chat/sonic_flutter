@@ -49,15 +49,23 @@ class FriendRequest extends StatelessWidget {
             ],
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
-            const FriendListTab(
-              status: FriendStatus.ACCEPTED,
+            SingleChildScrollView(
+              child: FriendListTab(
+                status: FriendStatus.ACCEPTED,
+              ),
             ),
-            const FriendListTab(
-              status: FriendStatus.REQUESTED,
+            SingleChildScrollView(
+              child: FriendListTab(
+                status: FriendStatus.REQUESTED,
+              ),
             ),
-            Container(),
+            SingleChildScrollView(
+              child: FriendListTab(
+                status: FriendStatus.REQUESTED_TO_YOU,
+              ),
+            ),
           ],
         ),
       ),

@@ -13,4 +13,7 @@ enum FriendStatus {
 
   @HiveField(2)
   IGNORED,
+
+  @HiveField(4)
+  REQUESTED_TO_YOU,
 }

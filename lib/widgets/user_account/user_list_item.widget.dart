@@ -5,10 +5,12 @@ import 'package:sonic_flutter/widgets/user_account/user_details_alert.widget.dar
 
 class UserListItem extends StatelessWidget {
   final PublicCredentials publicCredentials;
+  final bool disableAlert;
 
   const UserListItem({
     Key? key,
     required this.publicCredentials,
+    this.disableAlert = false,
   }) : super(key: key);
 
   void _handleClick(BuildContext context) {
@@ -33,9 +35,11 @@ class UserListItem extends StatelessWidget {
       ),
       title: Text(publicCredentials.account.fullName),
       subtitle: Text(publicCredentials.username),
-      onTap: () {
-        _handleClick(context);
-      },
+      onTap: disableAlert
+          ? null
+          : () {
+              _handleClick(context);
+            },
     );
   }
 }

@@ -12,7 +12,7 @@ import 'package:sonic_flutter/models/public_credentials/public_credentials.model
 import 'package:sonic_flutter/services/friend_request.service.dart';
 import 'package:sonic_flutter/utils/display_snackbar.util.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
-import 'package:sonic_flutter/widgets/common/loading_icon_button.widget.dart';
+import 'package:sonic_flutter/widgets/common/loading_text_icon_button.widget.dart';
 import 'package:sonic_flutter/widgets/common/profile_picture.widget.dart';
 
 import '../../exceptions/friend_request.exception.dart';
@@ -192,7 +192,7 @@ class _UserDetailsAlertState extends State<UserDetailsAlert> {
                         bool connected = value != ConnectivityResult.none;
 
                         return connected
-                            ? LoadingIconButton(
+                            ? LoadingTextIconButton(
                                 connected: true,
                                 loading: _loading,
                                 onFormSubmit: _sendFriendRequest,
@@ -202,7 +202,7 @@ class _UserDetailsAlertState extends State<UserDetailsAlert> {
                                   Icons.person,
                                 ),
                               )
-                            : LoadingIconButton(
+                            : LoadingTextIconButton(
                                 connected: false,
                                 loading: _loading,
                                 onFormSubmit: _sendFriendRequest,
@@ -223,7 +223,7 @@ class _UserDetailsAlertState extends State<UserDetailsAlert> {
                             bool connected = value != ConnectivityResult.none;
 
                             return connected
-                                ? LoadingIconButton(
+                                ? LoadingTextIconButton(
                                     connected: true,
                                     loading: _loading,
                                     onFormSubmit: _cancelFriendRequest,
@@ -233,7 +233,7 @@ class _UserDetailsAlertState extends State<UserDetailsAlert> {
                                       Icons.person,
                                     ),
                                   )
-                                : LoadingIconButton(
+                                : LoadingTextIconButton(
                                     connected: false,
                                     loading: _loading,
                                     onFormSubmit: _cancelFriendRequest,
@@ -252,7 +252,7 @@ class _UserDetailsAlertState extends State<UserDetailsAlert> {
                             bool connected = value != ConnectivityResult.none;
 
                             return connected
-                                ? LoadingIconButton(
+                                ? LoadingTextIconButton(
                                     connected: true,
                                     loading: _loading,
                                     onFormSubmit: _cancelFriendRequest,
@@ -262,7 +262,7 @@ class _UserDetailsAlertState extends State<UserDetailsAlert> {
                                       Icons.person,
                                     ),
                                   )
-                                : LoadingIconButton(
+                                : LoadingTextIconButton(
                                     connected: false,
                                     loading: _loading,
                                     onFormSubmit: _cancelFriendRequest,

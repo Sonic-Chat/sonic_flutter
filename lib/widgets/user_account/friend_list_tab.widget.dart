@@ -7,6 +7,7 @@ import 'package:sonic_flutter/exceptions/general.exception.dart';
 import 'package:sonic_flutter/models/friend_request/friend_request.model.dart';
 import 'package:sonic_flutter/services/friend_request.service.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
+import 'package:sonic_flutter/widgets/user_account/new_request_list.widget.dart';
 import 'package:sonic_flutter/widgets/user_account/user_friend_list.widget.dart';
 
 class FriendListTab extends StatefulWidget {
@@ -79,9 +80,16 @@ class _FriendListTabState extends State<FriendListTab> {
   }
 
   Widget _buildList() {
-    return UserFriendList(
-      users: _requests!,
-    );
+    return widget.status == FriendStatus.REQUESTED_TO_YOU
+        ? NewRequestList(
+            users: _requests!,
+        refreshStatus: () {
+          setState(() {});
+        }
+          )
+        : UserFriendList(
+            users: _requests!,
+          );
   }
 
   Widget _onLoadingData() {

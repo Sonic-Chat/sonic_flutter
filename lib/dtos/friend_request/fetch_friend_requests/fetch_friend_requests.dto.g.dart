@@ -22,4 +22,5 @@ const _$FriendStatusEnumMap = {
   FriendStatus.REQUESTED: 'REQUESTED',
   FriendStatus.ACCEPTED: 'ACCEPTED',
   FriendStatus.IGNORED: 'IGNORED',
+  FriendStatus.REQUESTED_TO_YOU: 'REQUESTED_TO_YOU',
 };

@@ -19,6 +19,8 @@ class FriendStatusAdapter extends TypeAdapter<FriendStatus> {
         return FriendStatus.ACCEPTED;
       case 2:
         return FriendStatus.IGNORED;
+      case 4:
+        return FriendStatus.REQUESTED_TO_YOU;
       default:
         return FriendStatus.REQUESTED;
     }
@@ -35,6 +37,9 @@ class FriendStatusAdapter extends TypeAdapter<FriendStatus> {
         break;
       case FriendStatus.IGNORED:
         writer.writeByte(2);
+        break;
+      case FriendStatus.REQUESTED_TO_YOU:
+        writer.writeByte(4);
         break;
     }
   }

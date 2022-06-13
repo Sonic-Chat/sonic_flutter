@@ -19,7 +19,7 @@ import 'package:sonic_flutter/utils/image_upload.util.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 import 'package:sonic_flutter/utils/validators/value.validator.dart';
 import 'package:sonic_flutter/widgets/common/custom_field.widget.dart';
-import 'package:sonic_flutter/widgets/common/loading_icon_button.widget.dart';
+import 'package:sonic_flutter/widgets/common/loading_text_icon_button.widget.dart';
 import 'package:sonic_flutter/widgets/common/profile_picture.widget.dart';
 
 class Register extends StatefulWidget {
@@ -312,7 +312,7 @@ class _RegisterState extends State<Register> {
                       bool connected = value != ConnectivityResult.none;
 
                       return connected
-                          ? LoadingIconButton(
+                          ? LoadingTextIconButton(
                               connected: true,
                               loading: _loading,
                               onFormSubmit: _onFormSubmit,
@@ -322,7 +322,7 @@ class _RegisterState extends State<Register> {
                                 Icons.login,
                               ),
                             )
-                          : LoadingIconButton(
+                          : LoadingTextIconButton(
                               connected: false,
                               loading: _loading,
                               onFormSubmit: _onFormSubmit,
