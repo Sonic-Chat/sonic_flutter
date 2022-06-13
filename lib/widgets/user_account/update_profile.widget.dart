@@ -20,7 +20,7 @@ import 'package:sonic_flutter/utils/image_upload.util.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 import 'package:sonic_flutter/utils/show_bottom_sheet.util.dart' as SBS;
 import 'package:sonic_flutter/widgets/common/custom_field.widget.dart';
-import 'package:sonic_flutter/widgets/common/loading_icon_button.widget.dart';
+import 'package:sonic_flutter/widgets/common/loading_text_icon_button.widget.dart';
 import 'package:sonic_flutter/widgets/common/profile_picture.widget.dart';
 
 class ProfileUpdateTab extends StatefulWidget {
@@ -289,7 +289,7 @@ class _ProfileUpdateTabState extends State<ProfileUpdateTab> {
                   bool connected = value != ConnectivityResult.none;
 
                   return connected
-                      ? LoadingIconButton(
+                      ? LoadingTextIconButton(
                           connected: true,
                           loading: _loading,
                           onFormSubmit: _onFormSubmit,
@@ -299,7 +299,7 @@ class _ProfileUpdateTabState extends State<ProfileUpdateTab> {
                             Icons.edit,
                           ),
                         )
-                      : LoadingIconButton(
+                      : LoadingTextIconButton(
                           connected: false,
                           loading: _loading,
                           onFormSubmit: _onFormSubmit,

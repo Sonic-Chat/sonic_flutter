@@ -3,6 +3,7 @@ import 'package:sonic_flutter/pages/account/account_update.page.dart';
 import 'package:sonic_flutter/pages/account/search.page.dart';
 import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/pages/auth/register.page.dart';
+import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
 import 'package:sonic_flutter/pages/home.page.dart';
 import 'package:sonic_flutter/pages/splash.page.dart';
 
@@ -25,6 +26,7 @@ class App extends StatelessWidget {
         Home.route: (BuildContext context) => const Home(),
         AccountUpdate.route: (BuildContext context) => const AccountUpdate(),
         Search.route: (BuildContext context) => const Search(),
+        FriendRequest.route: (BuildContext context) => const FriendRequest(),
       },
       initialRoute: Splash.route,
     );

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:sonic_flutter/services/credentials.service.dart';
+import 'package:sonic_flutter/services/friend_request.service.dart';
 import 'package:sonic_flutter/services/user_account.service.dart';
 
 class Providers extends StatefulWidget {
@@ -54,6 +55,12 @@ class _ProvidersState extends State<Providers> {
             apiUrl: widget.apiUrl,
             rawApiUrl: widget.rawApiUrl,
             authService: _authService,
+          ),
+        ),
+        Provider<FriendRequestService>(
+          create: (context) => FriendRequestService(
+            apiUrl: widget.apiUrl,
+            rawApiUrl: widget.rawApiUrl,
           ),
         ),
       ],

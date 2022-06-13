@@ -174,7 +174,6 @@ class CredentialsService {
       // Handling Errors.
       if (response.statusCode >= 400 && response.statusCode < 500) {
         Map<String, dynamic> body = json.decode(response.body);
-        print(body);
         throw AuthException(
             message: AuthError.values.firstWhere((error) =>
                 error.toString().substring("AuthError.".length) ==

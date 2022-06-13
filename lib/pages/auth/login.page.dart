@@ -15,7 +15,7 @@ import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:sonic_flutter/utils/display_snackbar.util.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 import 'package:sonic_flutter/widgets/common/custom_field.widget.dart';
-import 'package:sonic_flutter/widgets/common/loading_icon_button.widget.dart';
+import 'package:sonic_flutter/widgets/common/loading_text_icon_button.widget.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -155,7 +155,7 @@ class _LoginState extends State<Login> {
                       bool connected = value != ConnectivityResult.none;
 
                       return connected
-                          ? LoadingIconButton(
+                          ? LoadingTextIconButton(
                               connected: true,
                               loading: _loading,
                               onFormSubmit: _onFormSubmit,
@@ -165,7 +165,7 @@ class _LoginState extends State<Login> {
                                 Icons.login,
                               ),
                             )
-                          : LoadingIconButton(
+                          : LoadingTextIconButton(
                               connected: false,
                               loading: _loading,
                               onFormSubmit: _onFormSubmit,

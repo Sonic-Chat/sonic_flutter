@@ -1,6 +1,10 @@
 // Box Names.
 const LOGGED_IN_USER_BOX = "LOGGED_IN_USER_BOX";
 const USERS_BOX = "USERS_BOX";
+const FRIEND_REQUESTS_BOX = "FRIEND_REQUESTS_BOX";
 
 // Account Keys.
 const LOGGED_IN_USER = "LOGGED_IN_USER";
+
+// Friend Request Keys.
+const LOGGED_IN_USER_REQUESTS = "LOGGED_IN_USER_REQUESTS";

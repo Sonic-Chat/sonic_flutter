@@ -3,12 +3,14 @@ import 'package:sonic_flutter/models/public_credentials/public_credentials.model
 import 'package:sonic_flutter/widgets/common/profile_picture.widget.dart';
 import 'package:sonic_flutter/widgets/user_account/user_details_alert.widget.dart';
 
-class UserSearchResult extends StatelessWidget {
+class UserListItem extends StatelessWidget {
   final PublicCredentials publicCredentials;
+  final bool disableAlert;
 
-  const UserSearchResult({
+  const UserListItem({
     Key? key,
     required this.publicCredentials,
+    this.disableAlert = false,
   }) : super(key: key);
 
   void _handleClick(BuildContext context) {
@@ -33,9 +35,11 @@ class UserSearchResult extends StatelessWidget {
       ),
       title: Text(publicCredentials.account.fullName),
       subtitle: Text(publicCredentials.username),
-      onTap: () {
-        _handleClick(context);
-      },
+      onTap: disableAlert
+          ? null
+          : () {
+              _handleClick(context);
+            },
     );
   }
 }
