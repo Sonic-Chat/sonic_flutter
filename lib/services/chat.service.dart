@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart' as FA;
 import 'package:sonic_flutter/dtos/chat_message/connect_server/connect_server.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/delete_message/delete_message.dto.dart';
+import 'package:sonic_flutter/dtos/chat_message/disconnect_server/disconnect_server.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/mark_seen/mark_seen.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/send_image/send_image.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/send_message/send_message.dto.dart';
@@ -392,6 +393,50 @@ class ChatService {
       Map<String, dynamic> body = {
         "event": "mark-seen",
         "data": markSeenDto.toJson(),
+      };
+
+      // Returning JSON format of the body.
+      return json.encode(body);
+    } on FA.FirebaseAuthException catch (error) {
+      if (error.code == "network-request-failed") {
+        log.wtf("Firebase Server Offline");
+        throw GeneralException(
+          message: GeneralError.OFFLINE,
+        );
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  /*
+   * Service Implementation for disconnecting the server.
+   */
+  Future<String> disconnectServer() async {
+    try {
+      // Get the logged in user details.
+      FA.User? firebaseUser = _firebaseAuth.currentUser;
+
+      // Check if user is not null.
+      if (firebaseUser == null) {
+        // If there is no user logged is using firebase, throw an exception.
+        throw AuthException(
+          message: AuthError.UNAUTHENTICATED,
+        );
+      }
+      // Fetch the ID token for the user.
+      String firebaseAuthToken =
+          await _firebaseAuth.currentUser!.getIdToken(true);
+
+      // Preparing DTO for the request.
+      DisconnectServerDto disconnectServerDto = DisconnectServerDto(
+        authorization: firebaseAuthToken,
+      );
+
+      // Preparing body for the request.
+      Map<String, dynamic> body = {
+        "event": "disconnect",
+        "data": disconnectServerDto.toJson(),
       };
 
       // Returning JSON format of the body.
