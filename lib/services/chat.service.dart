@@ -13,10 +13,13 @@ import 'package:sonic_flutter/dtos/chat_message/send_message_image/send_message_
 import 'package:sonic_flutter/dtos/chat_message/sync_message/sync_message.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/update_message/update_message.dto.dart';
 import 'package:sonic_flutter/enum/auth_error.enum.dart';
+import 'package:sonic_flutter/enum/chat_error.enum.dart';
 import 'package:sonic_flutter/enum/general_error.enum.dart';
 import 'package:sonic_flutter/exceptions/auth.exception.dart';
+import 'package:sonic_flutter/exceptions/chat.exception.dart';
 import 'package:sonic_flutter/exceptions/general.exception.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
+import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 
 class ChatService {
@@ -455,6 +458,30 @@ class ChatService {
         rethrow;
       }
     }
+  }
+
+  /*
+   * Service Implementation for reacting to create message event.
+   */
+  void handleNewMessage(Map<String, dynamic> details) {
+    // Get the message model from the details.
+    Message newMessage = Message.fromJson(details['message']);
+
+    // Fetch the chat from the device.
+    Chat? chat = fetchChatFromOfflineDb(details['id']);
+
+    // Throw an exception if chat does not exist.
+    if (chat == null) {
+      throw ChatException(
+        message: ChatError.CHAT_UID_ILLEGAL,
+      );
+    }
+
+    // Add new message.
+    chat.messages.add(newMessage);
+
+    // Save the new chat to the device.
+    syncChatToOfflineDb(chat);
   }
 
   /*
