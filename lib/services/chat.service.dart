@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart' as FA;
 import 'package:hive/hive.dart';
+import 'package:sonic_flutter/constants/events.constant.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
 import 'package:sonic_flutter/dtos/chat_message/connect_server/connect_server.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/delete_message/delete_message.dto.dart';
@@ -460,6 +461,54 @@ class ChatService {
     }
   }
 
+  void handleWSEvents(Map<String, dynamic> data) {
+    String eventType = data['type'];
+
+    switch (eventType) {
+      case CREATE_MESSAGE_EVENT:
+        {
+          handleNewMessage(data['details']);
+          break;
+        }
+      case UPDATE_MESSAGE_EVENT:
+        {
+          handleUpdateMessage(data['details']);
+          break;
+        }
+      case DELETE_MESSAGE_EVENT:
+        {
+          handleDeleteMessage(data['details']);
+          break;
+        }
+      case DELIVERY_EVENT:
+        {
+          handleDelivery(data['details']);
+          break;
+        }
+      case SEEN_EVENT:
+        {
+          handleSeen(data['details']);
+          break;
+        }
+      case ERROR_EVENT:
+        {
+          List<String> rawErrors = data['errors'];
+          List<ChatError> errors = rawErrors
+              .map((rawError) => ChatError.values.firstWhere((error) =>
+                  error.toString().substring("ChatError.".length) == rawError))
+              .toList();
+
+          throw ChatException(
+            messages: errors,
+          );
+        }
+      default:
+        {
+          log.e(data);
+        }
+    }
+  }
+
   /*
    * Service Implementation for reacting to sync chat event.
    */
@@ -487,7 +536,7 @@ class ChatService {
     // Throw an exception if chat does not exist.
     if (chat == null) {
       throw ChatException(
-        message: ChatError.CHAT_UID_ILLEGAL,
+        messages: [ChatError.CHAT_UID_ILLEGAL],
       );
     }
 
@@ -511,7 +560,7 @@ class ChatService {
     // Throw an exception if chat does not exist.
     if (chat == null) {
       throw ChatException(
-        message: ChatError.CHAT_UID_ILLEGAL,
+        messages: [ChatError.CHAT_UID_ILLEGAL],
       );
     }
 
@@ -522,7 +571,7 @@ class ChatService {
     // Throw an exception if the message does not exist.
     if (index < 0) {
       throw ChatException(
-        message: ChatError.CHAT_UID_ILLEGAL,
+        messages: [ChatError.CHAT_UID_ILLEGAL],
       );
     }
 
@@ -546,7 +595,7 @@ class ChatService {
     // Throw an exception if chat does not exist.
     if (chat == null) {
       throw ChatException(
-        message: ChatError.CHAT_UID_ILLEGAL,
+        messages: [ChatError.CHAT_UID_ILLEGAL],
       );
     }
 
@@ -569,7 +618,7 @@ class ChatService {
     // Throw an exception if chat does not exist.
     if (chat == null) {
       throw ChatException(
-        message: ChatError.CHAT_UID_ILLEGAL,
+        messages: [ChatError.CHAT_UID_ILLEGAL],
       );
     }
 
@@ -594,7 +643,7 @@ class ChatService {
     // Throw an exception if chat does not exist.
     if (chat == null) {
       throw ChatException(
-        message: ChatError.CHAT_UID_ILLEGAL,
+        messages: [ChatError.CHAT_UID_ILLEGAL],
       );
     }
 
