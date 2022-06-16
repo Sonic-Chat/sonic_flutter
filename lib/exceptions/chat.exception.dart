@@ -1,14 +1,14 @@
 import 'package:sonic_flutter/enum/chat_error.enum.dart';
 
 class ChatException implements Exception {
-  ChatError message;
+  List<ChatError> messages;
 
   ChatException({
-    required this.message,
+    required this.messages,
   });
 
   @override
   String toString() {
-    return message.toString();
+    return messages.toString();
   }
 }
