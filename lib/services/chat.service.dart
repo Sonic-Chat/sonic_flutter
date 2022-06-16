@@ -520,6 +520,32 @@ class ChatService {
   }
 
   /*
+   * Service Implementation for reacting to delete message event.
+   */
+  void handleDeleteMessage(Map<String, dynamic> details) {
+    // Get the message id from the details.
+    String messageId = details['messageId'];
+
+    // Fetch the chat from the device.
+    Chat? chat = fetchChatFromOfflineDb(details['chatId']);
+
+    // Throw an exception if chat does not exist.
+    if (chat == null) {
+      throw ChatException(
+        message: ChatError.CHAT_UID_ILLEGAL,
+      );
+    }
+
+    // Remove message from the chat.
+    chat.messages.removeWhere(
+      (element) => element.id == messageId,
+    );
+
+    // Save the updated chat to the device.
+    syncChatToOfflineDb(chat);
+  }
+
+  /*
    * Service implementation for saving chat in offline storage.
    */
   void syncChatToOfflineDb(Chat chat) {
