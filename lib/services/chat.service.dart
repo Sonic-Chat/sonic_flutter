@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart' as FA;
+import 'package:hive/hive.dart';
+import 'package:sonic_flutter/constants/hive.constant.dart';
 import 'package:sonic_flutter/dtos/chat_message/connect_server/connect_server.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/delete_message/delete_message.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/disconnect_server/disconnect_server.dto.dart';
@@ -14,12 +16,14 @@ import 'package:sonic_flutter/enum/auth_error.enum.dart';
 import 'package:sonic_flutter/enum/general_error.enum.dart';
 import 'package:sonic_flutter/exceptions/auth.exception.dart';
 import 'package:sonic_flutter/exceptions/general.exception.dart';
+import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 
 class ChatService {
   final String rawApiUrl;
 
   final FA.FirebaseAuth _firebaseAuth = FA.FirebaseAuth.instance;
+  final Box<Chat> _chatDb = Hive.box<Chat>(CHAT_BOX);
 
   ChatService({
     required this.rawApiUrl,
@@ -451,5 +455,22 @@ class ChatService {
         rethrow;
       }
     }
+  }
+
+  /*
+   * Service implementation for saving chat in offline storage.
+   */
+  void syncChatToOfflineDb(Chat chat) {
+    log.i("Saving chat ${chat.id} to Hive DB");
+    _chatDb.put(chat.id, chat);
+    log.i("Saved chat ${chat.id} to Hive DB");
+  }
+
+  /*
+   * Service implementation for fetching chat from offline storage.
+   */
+  Chat? fetchChatFromOfflineDb(String id) {
+    log.i("Fetching chat $id from Hive DB");
+    return _chatDb.get(id);
   }
 }
