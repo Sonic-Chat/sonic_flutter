@@ -485,6 +485,41 @@ class ChatService {
   }
 
   /*
+   * Service Implementation for reacting to update message event.
+   */
+  void handleUpdateMessage(Map<String, dynamic> details) {
+    // Get the message model from the details.
+    Message updatedMessage = Message.fromJson(details['message']);
+
+    // Fetch the chat from the device.
+    Chat? chat = fetchChatFromOfflineDb(details['chatId']);
+
+    // Throw an exception if chat does not exist.
+    if (chat == null) {
+      throw ChatException(
+        message: ChatError.CHAT_UID_ILLEGAL,
+      );
+    }
+
+    // Find the index of the message.
+    int index =
+        chat.messages.indexWhere((element) => element.id == updatedMessage.id);
+
+    // Throw an exception if the message does not exist.
+    if (index < 0) {
+      throw ChatException(
+        message: ChatError.CHAT_UID_ILLEGAL,
+      );
+    }
+
+    // Update message.
+    chat.messages[index] = updatedMessage;
+
+    // Save the updated chat to the device.
+    syncChatToOfflineDb(chat);
+  }
+
+  /*
    * Service implementation for saving chat in offline storage.
    */
   void syncChatToOfflineDb(Chat chat) {
