@@ -461,6 +461,20 @@ class ChatService {
   }
 
   /*
+   * Service Implementation for reacting to sync chat event.
+   */
+  void handleSyncChat(Map<String, dynamic> details) {
+    // Converting JSON to objects.
+    List<dynamic> chatDtos = details['chats'];
+    List<Chat> chats = chatDtos.map((e) => Chat.fromJson(e)).toList();
+
+    for (var chat in chats) {
+      // Save the new chat to the device.
+      syncChatToOfflineDb(chat);
+    }
+  }
+
+  /*
    * Service Implementation for reacting to create message event.
    */
   void handleNewMessage(Map<String, dynamic> details) {
