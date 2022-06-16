@@ -585,6 +585,31 @@ class ChatService {
   }
 
   /*
+   * Service Implementation for reacting to seen event.
+   */
+  void handleSeen(Map<String, dynamic> details) {
+    // Fetch the chat from the device.
+    Chat? chat = fetchChatFromOfflineDb(details['chatId']);
+
+    // Throw an exception if chat does not exist.
+    if (chat == null) {
+      throw ChatException(
+        message: ChatError.CHAT_UID_ILLEGAL,
+      );
+    }
+
+    // Marking all as seen.
+    chat.seen.clear();
+
+    for (var account in chat.participants) {
+      chat.seen.add(account);
+    }
+
+    // Save the updated chat to the device.
+    syncChatToOfflineDb(chat);
+  }
+
+  /*
    * Service implementation for saving chat in offline storage.
    */
   void syncChatToOfflineDb(Chat chat) {
