@@ -6,6 +6,7 @@ import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/widgets/common/profile_picture.widget.dart';
+import 'package:intl/intl.dart';
 
 class ChatDisplay extends StatefulWidget {
   final Chat chat;
@@ -25,6 +26,7 @@ class _ChatDisplayState extends State<ChatDisplay> {
 
   bool _isSeen = false;
   String body = '';
+  DateTime? dateTime;
 
   @override
   void initState() {
@@ -47,6 +49,8 @@ class _ChatDisplayState extends State<ChatDisplay> {
 
     if (widget.chat.messages.isNotEmpty) {
       Message lastMessage = widget.chat.messages.last;
+
+      dateTime = lastMessage.createdAt;
 
       switch (lastMessage.type) {
         case MessageType.IMAGE:
@@ -91,6 +95,11 @@ class _ChatDisplayState extends State<ChatDisplay> {
           fontWeight: _isSeen ? FontWeight.normal : FontWeight.bold,
           color: _isSeen ? Colors.grey : Colors.black,
         ),
+      ),
+      trailing: Text(
+        dateTime != null
+            ? DateFormat.yMd().add_jm().format(dateTime!.toLocal())
+            : '',
       ),
     );
   }
