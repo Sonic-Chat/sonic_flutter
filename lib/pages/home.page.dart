@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sonic_flutter/dtos/friend_request/fetch_friend_requests/fetch_friend_requests.dto.dart';
 import 'package:sonic_flutter/pages/account/account_update.page.dart';
 import 'package:sonic_flutter/pages/account/search.page.dart';
+import 'package:sonic_flutter/pages/chat_message/chats.page.dart';
 import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
 import 'package:sonic_flutter/services/friend_request.service.dart';
@@ -92,6 +93,14 @@ class _HomeState extends State<Home> {
                 );
               },
               child: const Text('Friends'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  Chats.route,
+                );
+              },
+              child: const Text('Chats'),
             ),
           ],
         ),
