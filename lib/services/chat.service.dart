@@ -420,7 +420,7 @@ class ChatService {
   /*
    * Service Implementation for marking chats seen.
    */
-  Future<String> markSeen({
+  Future<void> markSeen({
     required String chatId,
   }) async {
     try {
@@ -450,8 +450,11 @@ class ChatService {
         "data": markSeenDto.toJson(),
       };
 
-      // Returning JSON format of the body.
-      return json.encode(body);
+      // String version of JSON format of the body.
+      String encodedBody = json.encode(body);
+
+      // Send event to the server.
+      ioWebSocketChannel.sink.add(encodedBody);
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
         log.wtf("Firebase Server Offline");
