@@ -191,7 +191,7 @@ class ChatService {
       // String version of JSON format of the body.
       String encodedBody = json.encode(body);
 
-      // Send sync chat event to the server.
+      // Send event to the server.
       ioWebSocketChannel.sink.add(encodedBody);
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
@@ -208,7 +208,7 @@ class ChatService {
   /*
    * Service Implementation for sending image.
    */
-  Future<String> sendImage({
+  Future<void> sendImage({
     required String firebaseId,
     required String imageUrl,
     required String chatId,
@@ -242,8 +242,11 @@ class ChatService {
         "data": sendImageDto.toJson(),
       };
 
-      // Returning JSON format of the body.
-      return json.encode(body);
+      // String version of JSON format of the body.
+      String encodedBody = json.encode(body);
+
+      // Send event to the server.
+      ioWebSocketChannel.sink.add(encodedBody);
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
         log.wtf("Firebase Server Offline");
