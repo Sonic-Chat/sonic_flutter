@@ -262,7 +262,7 @@ class ChatService {
   /*
    * Service Implementation for sending image message.
    */
-  Future<String> sendMessageImage({
+  Future<void> sendMessageImage({
     required String message,
     required String firebaseId,
     required String imageUrl,
@@ -298,8 +298,11 @@ class ChatService {
         "data": sendMessageImageDto.toJson(),
       };
 
-      // Returning JSON format of the body.
-      return json.encode(body);
+      // String version of JSON format of the body.
+      String encodedBody = json.encode(body);
+
+      // Send event to the server.
+      ioWebSocketChannel.sink.add(encodedBody);
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
         log.wtf("Firebase Server Offline");
