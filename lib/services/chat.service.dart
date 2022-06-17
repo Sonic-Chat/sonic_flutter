@@ -467,50 +467,6 @@ class ChatService {
     }
   }
 
-  /*
-   * Service Implementation for disconnecting the server.
-   */
-  Future<String> disconnectServer() async {
-    try {
-      // Get the logged in user details.
-      FA.User? firebaseUser = _firebaseAuth.currentUser;
-
-      // Check if user is not null.
-      if (firebaseUser == null) {
-        // If there is no user logged is using firebase, throw an exception.
-        throw AuthException(
-          message: AuthError.UNAUTHENTICATED,
-        );
-      }
-      // Fetch the ID token for the user.
-      String firebaseAuthToken =
-          await _firebaseAuth.currentUser!.getIdToken(true);
-
-      // Preparing DTO for the request.
-      DisconnectServerDto disconnectServerDto = DisconnectServerDto(
-        authorization: firebaseAuthToken,
-      );
-
-      // Preparing body for the request.
-      Map<String, dynamic> body = {
-        "event": "disconnect",
-        "data": disconnectServerDto.toJson(),
-      };
-
-      // Returning JSON format of the body.
-      return json.encode(body);
-    } on FA.FirebaseAuthException catch (error) {
-      if (error.code == "network-request-failed") {
-        log.wtf("Firebase Server Offline");
-        throw GeneralException(
-          message: GeneralError.OFFLINE,
-        );
-      } else {
-        rethrow;
-      }
-    }
-  }
-
   void handleWSEvents(Map<String, dynamic> data) {
     String eventType = data['type'];
 
