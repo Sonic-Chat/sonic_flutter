@@ -370,7 +370,7 @@ class ChatService {
   /*
    * Service Implementation for deleting messages.
    */
-  Future<String> deleteMessage({
+  Future<void> deleteMessage({
     required String messageId,
   }) async {
     try {
@@ -400,8 +400,11 @@ class ChatService {
         "data": deleteMessageDto.toJson(),
       };
 
-      // Returning JSON format of the body.
-      return json.encode(body);
+      // String version of JSON format of the body.
+      String encodedBody = json.encode(body);
+
+      // Send event to the server.
+      ioWebSocketChannel.sink.add(encodedBody);
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
         log.wtf("Firebase Server Offline");
