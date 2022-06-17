@@ -19,8 +19,10 @@ import 'package:sonic_flutter/enum/general_error.enum.dart';
 import 'package:sonic_flutter/exceptions/auth.exception.dart';
 import 'package:sonic_flutter/exceptions/chat.exception.dart';
 import 'package:sonic_flutter/exceptions/general.exception.dart';
+import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
+import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -34,8 +36,11 @@ class ChatService {
 
   late final IOWebSocketChannel ioWebSocketChannel;
 
+  final AuthService authService;
+
   ChatService({
     required this.rawApiUrl,
+    required this.authService,
   });
 
   /*
@@ -533,6 +538,12 @@ class ChatService {
     List<Chat> chats = chatDtos.map((e) => Chat.fromJson(e)).toList();
 
     for (var chat in chats) {
+      chat.messages.sort(
+        (messageOne, messageTwo) => messageOne.createdAt.compareTo(
+          messageTwo.createdAt,
+        ),
+      );
+
       // Save the new chat to the device.
       syncChatToOfflineDb(chat);
     }
@@ -545,8 +556,10 @@ class ChatService {
     // Get the message model from the details.
     Message newMessage = Message.fromJson(details['message']);
 
+    Account loggedInAccount = authService.fetchAccountFromOfflineDb()!;
+
     // Fetch the chat from the device.
-    Chat? chat = fetchChatFromOfflineDb(details['id']);
+    Chat? chat = fetchChatFromOfflineDb(details['chatId']);
 
     // Throw an exception if chat does not exist.
     if (chat == null) {
@@ -557,6 +570,22 @@ class ChatService {
 
     // Add new message.
     chat.messages.add(newMessage);
+
+    chat.delivered.clear();
+    chat.delivered.addAll(chat.participants);
+
+    if (newMessage.sentBy.id != loggedInAccount.id) {
+      chat.seen.clear();
+      chat.seen.add(chat.participants
+          .where((element) => element.id != loggedInAccount.id)
+          .first);
+    }
+
+    chat.messages.sort(
+      (messageOne, messageTwo) => messageOne.createdAt.compareTo(
+        messageTwo.createdAt,
+      ),
+    );
 
     // Save the new chat to the device.
     syncChatToOfflineDb(chat);
