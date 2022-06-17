@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart' as FA;
@@ -22,12 +23,18 @@ import 'package:sonic_flutter/exceptions/general.exception.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/status.dart' as status;
 
 class ChatService {
   final String rawApiUrl;
 
   final FA.FirebaseAuth _firebaseAuth = FA.FirebaseAuth.instance;
   final Box<Chat> _chatDb = Hive.box<Chat>(CHAT_BOX);
+  final StreamController<List<ChatError>> chatErrorsStreams =
+      StreamController();
+
+  late final IOWebSocketChannel ioWebSocketChannel;
 
   ChatService({
     required this.rawApiUrl,
@@ -36,7 +43,7 @@ class ChatService {
   /*
    * Service Implementation for connecting to the server.
    */
-  Future<String> connectServer() async {
+  Future<void> connectServer() async {
     try {
       // Get the logged in user details.
       FA.User? firebaseUser = _firebaseAuth.currentUser;
@@ -63,8 +70,30 @@ class ChatService {
         "data": connectServerDto.toJson(),
       };
 
-      // Returning JSON format of the body.
-      return json.encode(body);
+      // String version of JSON format of the body.
+      String encodedBody = json.encode(body);
+
+      // Connecting to the WS Server.
+      ioWebSocketChannel = IOWebSocketChannel.connect(
+        Uri.parse(
+          "ws://$rawApiUrl",
+        ),
+      );
+
+      // Send connection status to the server.
+      ioWebSocketChannel.sink.add(encodedBody);
+
+      // Listen for events and act on it accordingly.
+      ioWebSocketChannel.stream.listen((event) {
+        handleWSEvents(json.decode(event));
+      }, onError: (error, stackTrace) {
+        log.e("Chat Service Error", error, stackTrace);
+        chatErrorsStreams.add(
+          [
+            ChatError.ILLEGAL_ACTION,
+          ],
+        );
+      });
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
         log.wtf("Firebase Server Offline");
@@ -80,7 +109,7 @@ class ChatService {
   /*
    * Service Implementation for syncing messages.
    */
-  Future<String> syncMessage() async {
+  Future<void> syncMessage() async {
     try {
       // Get the logged in user details.
       FA.User? firebaseUser = _firebaseAuth.currentUser;
@@ -107,8 +136,11 @@ class ChatService {
         "data": syncMessageDto.toJson(),
       };
 
-      // Returning JSON format of the body.
-      return json.encode(body);
+      // String version of JSON format of the body.
+      String encodedBody = json.encode(body);
+
+      // Send sync chat event to the server.
+      ioWebSocketChannel.sink.add(encodedBody);
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
         log.wtf("Firebase Server Offline");
@@ -498,9 +530,8 @@ class ChatService {
                   error.toString().substring("ChatError.".length) == rawError))
               .toList();
 
-          throw ChatException(
-            messages: errors,
-          );
+          chatErrorsStreams.add(errors);
+          break;
         }
       default:
         {
