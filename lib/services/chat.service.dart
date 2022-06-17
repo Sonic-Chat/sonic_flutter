@@ -318,7 +318,7 @@ class ChatService {
   /*
    * Service Implementation for updating messages.
    */
-  Future<String> updateMessage({
+  Future<void> updateMessage({
     required String message,
     required String messageId,
   }) async {
@@ -350,8 +350,11 @@ class ChatService {
         "data": updateMessageDto.toJson(),
       };
 
-      // Returning JSON format of the body.
-      return json.encode(body);
+      // String version of JSON format of the body.
+      String encodedBody = json.encode(body);
+
+      // Send event to the server.
+      ioWebSocketChannel.sink.add(encodedBody);
     } on FA.FirebaseAuthException catch (error) {
       if (error.code == "network-request-failed") {
         log.wtf("Firebase Server Offline");
