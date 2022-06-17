@@ -109,6 +109,8 @@ class ChatService {
    */
   Future<void> syncMessage() async {
     try {
+      await _chatDb.deleteAll(_chatDb.keys);
+
       // Get the logged in user details.
       FA.User? firebaseUser = _firebaseAuth.currentUser;
 
