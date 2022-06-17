@@ -7,7 +7,6 @@ import 'package:sonic_flutter/constants/events.constant.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
 import 'package:sonic_flutter/dtos/chat_message/connect_server/connect_server.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/delete_message/delete_message.dto.dart';
-import 'package:sonic_flutter/dtos/chat_message/disconnect_server/disconnect_server.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/mark_seen/mark_seen.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/send_image/send_image.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/send_message/send_message.dto.dart';
@@ -24,7 +23,6 @@ import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/status.dart' as status;
 
 class ChatService {
   final String rawApiUrl;
@@ -471,6 +469,11 @@ class ChatService {
     String eventType = data['type'];
 
     switch (eventType) {
+      case SYNC_CHAT_EVENT:
+        {
+          handleSyncChat(data['details']);
+          break;
+        }
       case CREATE_MESSAGE_EVENT:
         {
           handleNewMessage(data['details']);
@@ -494,6 +497,11 @@ class ChatService {
       case SEEN_EVENT:
         {
           handleSeen(data['details']);
+          break;
+        }
+      case SUCCESS_EVENT:
+        {
+          log.i(data['message']);
           break;
         }
       case ERROR_EVENT:

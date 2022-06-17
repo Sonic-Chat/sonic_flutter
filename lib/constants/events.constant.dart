@@ -5,3 +5,4 @@ const SYNC_CHAT_EVENT = "sync-chat";
 const DELIVERY_EVENT = "mark-delivered";
 const SEEN_EVENT = "mark-seen";
 const ERROR_EVENT = "error";
+const SUCCESS_EVENT = "success";
