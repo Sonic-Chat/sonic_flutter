@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sonic_flutter/arguments/singular_chat.argument.dart';
 import 'package:sonic_flutter/enum/message_type.enum.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
+import 'package:sonic_flutter/pages/chat_message/singular_chat.page.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/widgets/common/profile_picture.widget.dart';
 import 'package:intl/intl.dart';
@@ -79,6 +81,14 @@ class _ChatDisplayState extends State<ChatDisplay> {
     }
 
     return ListTile(
+      onTap: () {
+        Navigator.of(context).pushNamed(
+          SingularChat.route,
+          arguments: SingularChatArgument(
+            chatId: widget.chat.id,
+          ),
+        );
+      },
       leading: ProfilePicture(
         imageUrl: _friendAccount.imageUrl,
         size: MediaQuery.of(context).size.width * 0.1,

@@ -4,6 +4,7 @@ import 'package:sonic_flutter/pages/account/search.page.dart';
 import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/pages/auth/register.page.dart';
 import 'package:sonic_flutter/pages/chat_message/chats.page.dart';
+import 'package:sonic_flutter/pages/chat_message/singular_chat.page.dart';
 import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
 import 'package:sonic_flutter/pages/home.page.dart';
 import 'package:sonic_flutter/pages/splash.page.dart';
@@ -29,6 +30,7 @@ class App extends StatelessWidget {
         Search.route: (BuildContext context) => const Search(),
         FriendRequest.route: (BuildContext context) => const FriendRequest(),
         Chats.route: (BuildContext context) => const Chats(),
+        SingularChat.route: (BuildContext context) => const SingularChat(),
       },
       initialRoute: Splash.route,
     );
