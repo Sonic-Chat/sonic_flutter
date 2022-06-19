@@ -6,7 +6,7 @@ part 'send_message_image.dto.g.dart';
 @JsonSerializable()
 class SendMessageImageDto {
   final String authorization;
-  final MessageType type = MessageType.IMAGE_TEXT;
+  final MessageType type;
   final String message;
   final String firebaseId;
   final String imageUrl;
@@ -18,6 +18,7 @@ class SendMessageImageDto {
     required this.chatId,
     required this.firebaseId,
     required this.imageUrl,
+    this.type = MessageType.IMAGE_TEXT,
   });
 
   factory SendMessageImageDto.fromJson(Map<String, dynamic> json) =>

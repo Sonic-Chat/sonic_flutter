@@ -6,7 +6,7 @@ part 'send_message.dto.g.dart';
 @JsonSerializable()
 class SendMessageDto {
   final String authorization;
-  final MessageType type = MessageType.TEXT;
+  final MessageType type;
   final String message;
   final String chatId;
 
@@ -14,6 +14,7 @@ class SendMessageDto {
     required this.authorization,
     required this.message,
     required this.chatId,
+    this.type = MessageType.TEXT,
   });
 
   factory SendMessageDto.fromJson(Map<String, dynamic> json) =>
