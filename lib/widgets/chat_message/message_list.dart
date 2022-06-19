@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/widgets/chat_message/message_bubble.widget.dart';
@@ -14,19 +13,18 @@ class MessageList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScrollController controller = ScrollController();
+    List<Message> chatMessages = List.from(chat.messages.reversed);
 
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      controller.jumpTo(controller.position.maxScrollExtent);
-    });
-
-    return Expanded(
+    return Container(
+      margin: EdgeInsets.only(
+        bottom: MediaQuery.of(context).size.height * 0.1,
+      ),
       child: ListView.builder(
-        controller: controller,
+        reverse: true,
         shrinkWrap: true,
         itemCount: chat.messages.length,
         itemBuilder: (context, index) {
-          Message message = chat.messages[index];
+          Message message = chatMessages[index];
           return MessageBubble(
             chat: chat,
             message: message,
