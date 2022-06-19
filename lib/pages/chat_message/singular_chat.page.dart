@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sonic_flutter/arguments/singular_chat.argument.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
-import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 import 'package:sonic_flutter/widgets/chat_message/chat_field.widget.dart';
-import 'package:sonic_flutter/widgets/chat_message/message_bubble.widget.dart';
 import 'package:sonic_flutter/widgets/chat_message/message_list.dart';
 import 'package:sonic_flutter/widgets/common/profile_picture.widget.dart';
 
