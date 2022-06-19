@@ -9,6 +9,7 @@ import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
+import 'package:sonic_flutter/utils/logger.util.dart';
 import 'package:sonic_flutter/widgets/chat_message/chat_field.widget.dart';
 import 'package:sonic_flutter/widgets/chat_message/message_bubble.widget.dart';
 import 'package:sonic_flutter/widgets/chat_message/message_list.dart';
@@ -50,6 +51,14 @@ class _SingularChatState extends State<SingularChat> {
           ModalRoute.of(context)!.settings.arguments as SingularChatArgument;
 
       _chatId = singularChatArgument.chatId;
+
+      _chatService
+          .markSeen(
+            chatId: _chatId!,
+          )
+          .then((value) => log.i("Marked chat $_chatId seen."))
+          .catchError((error, stackTrace) =>
+              log.e("Singular Chat page Error", error, stackTrace));
     }
 
     return ValueListenableBuilder<Box<Chat>>(
