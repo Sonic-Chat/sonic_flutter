@@ -572,12 +572,17 @@ class ChatService {
     chat.messages.add(newMessage);
 
     chat.delivered.clear();
-    chat.delivered.addAll(chat.participants);
+    chat.delivered.add(loggedInAccount);
 
     if (newMessage.sentBy.id != loggedInAccount.id) {
       chat.seen.clear();
       chat.seen.add(chat.participants
           .where((element) => element.id != loggedInAccount.id)
+          .first);
+    } else {
+      chat.seen.clear();
+      chat.seen.add(chat.participants
+          .where((element) => element.id == loggedInAccount.id)
           .first);
     }
 
