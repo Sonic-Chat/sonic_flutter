@@ -508,7 +508,11 @@ class ChatService {
         }
       case SUCCESS_EVENT:
         {
-          log.i(data['message']);
+          if (data['message'] == 'SEEN') {
+            handleSelfSeen(data['details']);
+          } else {
+            log.i(data['message']);
+          }
           break;
         }
       case ERROR_EVENT:
@@ -702,6 +706,29 @@ class ChatService {
     for (var account in chat.participants) {
       chat.seen.add(account);
     }
+
+    // Save the updated chat to the device.
+    syncChatToOfflineDb(chat);
+  }
+
+  /*
+   * Service Implementation for reacting to seen confirmation event.
+   */
+  void handleSelfSeen(Map<String, dynamic> details) {
+    // Fetch the chat from the device.
+    Chat? chat = fetchChatFromOfflineDb(details['chatId']);
+
+    Account loggedInAccount = authService.fetchAccountFromOfflineDb()!;
+
+    // Throw an exception if chat does not exist.
+    if (chat == null) {
+      throw ChatException(
+        messages: [ChatError.CHAT_UID_ILLEGAL],
+      );
+    }
+
+    // Marking chat as seen.
+    chat.seen.add(loggedInAccount);
 
     // Save the updated chat to the device.
     syncChatToOfflineDb(chat);
