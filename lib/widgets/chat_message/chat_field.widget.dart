@@ -229,8 +229,6 @@ class _ChatFieldState extends State<ChatField> {
   Widget build(BuildContext context) {
     if (widget.message != null && widget.type == ChatFieldType.Update) {
       textFieldController.text = widget.message!.message!;
-    } else {
-      textFieldController.text = '';
     }
 
     return Container(
@@ -244,7 +242,10 @@ class _ChatFieldState extends State<ChatField> {
                   children: [
                     const Text('Updating Message'),
                     IconButton(
-                      onPressed: widget.cancelEditMessage,
+                      onPressed: () {
+                        textFieldController.text = '';
+                        widget.cancelEditMessage();
+                      },
                       icon: const Icon(
                         Icons.cancel,
                       ),
