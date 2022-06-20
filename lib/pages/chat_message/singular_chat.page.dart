@@ -3,8 +3,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sonic_flutter/arguments/singular_chat.argument.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
+import 'package:sonic_flutter/enum/chat_field_type.enum.dart';
+import 'package:sonic_flutter/enum/message_type.enum.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
+import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
@@ -27,6 +30,10 @@ class _SingularChatState extends State<SingularChat> {
   Account? _friendAccount;
   String? _chatId;
 
+  ChatFieldType _chatFieldType = ChatFieldType.Create;
+  bool _messageSelected = false;
+  Message? _message;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +46,35 @@ class _SingularChatState extends State<SingularChat> {
       context,
       listen: false,
     );
+  }
+
+  void _selectMessage(Message message) {
+    setState(() {
+      _messageSelected = true;
+      _message = message;
+    });
+  }
+
+  void _editMessage() {
+    setState(() {
+      _messageSelected = false;
+      _chatFieldType = ChatFieldType.Update;
+    });
+  }
+
+  void _cancelEditMessage() {
+    setState(() {
+      _messageSelected = false;
+      _message = null;
+      _chatFieldType = ChatFieldType.Create;
+    });
+  }
+
+  void _unselectMessage() {
+    setState(() {
+      _messageSelected = false;
+      _message = null;
+    });
   }
 
   @override
@@ -67,26 +103,62 @@ class _SingularChatState extends State<SingularChat> {
             (element) => element.id != _accountProvider.getAccount()!.id);
 
         return Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
             elevation: 0,
             leading: null,
             automaticallyImplyLeading: false,
-            title: ListTile(
-              leading: ProfilePicture(
-                imageUrl: _friendAccount!.imageUrl,
-                size: MediaQuery.of(context).size.width * 0.1,
-              ),
-              title: Text(
-                _friendAccount!.fullName,
-              ),
-            ),
+            title: _messageSelected
+                ? const Text('Message Selected')
+                : ListTile(
+                    leading: ProfilePicture(
+                      imageUrl: _friendAccount!.imageUrl,
+                      size: MediaQuery.of(context).size.width * 0.1,
+                    ),
+                    title: Text(
+                      _friendAccount!.fullName,
+                    ),
+                  ),
             toolbarHeight: MediaQuery.of(context).size.height * 0.1,
+            actions: _messageSelected
+                ? (_message!.type == MessageType.TEXT ||
+                        _message!.type == MessageType.IMAGE_TEXT)
+                    ? [
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: _editMessage,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {},
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.cancel_outlined),
+                          onPressed: _unselectMessage,
+                        ),
+                      ]
+                    : [
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {},
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.cancel_outlined),
+                          onPressed: _unselectMessage,
+                        ),
+                      ]
+                : [],
           ),
           body: MessageList(
             chat: chat,
+            onLongPress: _selectMessage,
+            selectedMessage: _message,
           ),
           bottomSheet: ChatField(
             chatId: chat.id,
+            type: _chatFieldType,
+            message: _message,
+            cancelEditMessage: _cancelEditMessage,
           ),
         );
       },

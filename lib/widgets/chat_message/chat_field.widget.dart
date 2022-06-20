@@ -8,7 +8,9 @@ import 'package:provider/provider.dart';
 import 'package:sonic_flutter/arguments/message_image_upload.argument.dart';
 import 'package:sonic_flutter/arguments/send_image.argument.dart';
 import 'package:sonic_flutter/arguments/send_image.argument.dart';
+import 'package:sonic_flutter/enum/chat_field_type.enum.dart';
 import 'package:sonic_flutter/enum/message_type.enum.dart';
+import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/pages/chat_message/send_image.page.dart';
 import 'package:sonic_flutter/pages/chat_message/send_image.page.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
@@ -21,12 +23,18 @@ class ChatField extends StatefulWidget {
   final MessageType messageType;
   final String chatId;
   final File? imageFile;
+  final ChatFieldType type;
+  final Message? message;
+  final VoidCallback cancelEditMessage;
 
   const ChatField({
     Key? key,
     this.messageType = MessageType.TEXT,
     required this.chatId,
     this.imageFile,
+    required this.type,
+    this.message,
+    required this.cancelEditMessage,
   }) : super(key: key);
 
   @override
@@ -152,37 +160,46 @@ class _ChatFieldState extends State<ChatField> {
     }
 
     try {
-      if (sendMessageType == MessageType.IMAGE) {
-        MessageImageUploadArgument messageImageUploadArgument =
-            await messageImageUpload(
-          widget.imageFile!,
-        );
+      if (widget.type == ChatFieldType.Create) {
+        if (sendMessageType == MessageType.IMAGE) {
+          MessageImageUploadArgument messageImageUploadArgument =
+              await messageImageUpload(
+            widget.imageFile!,
+          );
 
-        await _chatService.sendImage(
-          firebaseId: messageImageUploadArgument.firebaseId,
-          imageUrl: messageImageUploadArgument.imageUrl,
-          chatId: widget.chatId,
-        );
-
-        Navigator.of(context).pop();
-      } else if (sendMessageType == MessageType.IMAGE_TEXT) {
-        MessageImageUploadArgument messageImageUploadArgument =
-            await messageImageUpload(
-          widget.imageFile!,
-        );
-
-        await _chatService.sendMessageImage(
+          await _chatService.sendImage(
             firebaseId: messageImageUploadArgument.firebaseId,
             imageUrl: messageImageUploadArgument.imageUrl,
             chatId: widget.chatId,
-            message: textFieldController.text);
+          );
 
-        Navigator.of(context).pop();
-      } else if (sendMessageType == MessageType.TEXT) {
-        await _chatService.sendTextMessage(
-            chatId: widget.chatId, message: textFieldController.text);
+          Navigator.of(context).pop();
+        } else if (sendMessageType == MessageType.IMAGE_TEXT) {
+          MessageImageUploadArgument messageImageUploadArgument =
+              await messageImageUpload(
+            widget.imageFile!,
+          );
 
-        textFieldController.clear();
+          await _chatService.sendMessageImage(
+              firebaseId: messageImageUploadArgument.firebaseId,
+              imageUrl: messageImageUploadArgument.imageUrl,
+              chatId: widget.chatId,
+              message: textFieldController.text);
+
+          Navigator.of(context).pop();
+        } else if (sendMessageType == MessageType.TEXT) {
+          await _chatService.sendTextMessage(
+              chatId: widget.chatId, message: textFieldController.text);
+
+          textFieldController.clear();
+        }
+      } else {
+        await _chatService.updateMessage(
+          message: textFieldController.text,
+          messageId: widget.message!.id,
+        );
+
+        widget.cancelEditMessage();
       }
     } catch (error, stackTrace) {
       log.e(
@@ -210,98 +227,128 @@ class _ChatFieldState extends State<ChatField> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Container(
-        margin: const EdgeInsets.symmetric(
-          vertical: 10.0,
-          horizontal: 10.0,
-        ),
-        child: TextFormField(
-          style: const TextStyle(
-            color: Colors.black,
-          ),
-          minLines: 1,
-          maxLines: 10,
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            hintStyle: const TextStyle(
-              color: Colors.black,
-            ),
-            hintText: 'Message...',
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            filled: true,
-            fillColor: Colors.white,
-            labelText: '',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                15.0,
-              ),
-              borderSide: const BorderSide(
-                width: 0,
-                style: BorderStyle.none,
-              ),
-            ),
-            prefixIcon: widget.messageType == MessageType.TEXT
-                ? OfflineBuilder(
-                    connectivityBuilder: (BuildContext context,
-                        ConnectivityResult value, Widget child) {
-                      bool connected = value != ConnectivityResult.none;
+    if (widget.message != null && widget.type == ChatFieldType.Update) {
+      textFieldController.text = widget.message!.message!;
+    } else {
+      textFieldController.text = '';
+    }
 
-                      return connected
-                          ? IconButton(
-                              icon: const Icon(
-                                Icons.photo,
-                              ),
-                              onPressed: _onUploadImage,
-                            )
-                          : const IconButton(
-                              icon: Icon(
-                                Icons.photo,
-                              ),
-                              onPressed: null,
-                            );
-                    },
-                    child: const SizedBox(),
-                  )
-                : null,
-            suffixIcon: _loading
-                ? const CircularProgressIndicator(
-                    color: Colors.grey,
-                  )
-                : OfflineBuilder(
-                    connectivityBuilder: (BuildContext context,
-                        ConnectivityResult value, Widget child) {
-                      bool connected = value != ConnectivityResult.none;
-
-                      return connected
-                          ? IconButton(
-                              icon: const Icon(
-                                Icons.send,
-                              ),
-                              onPressed: _onFormSubmit,
-                            )
-                          : const IconButton(
-                              icon: Icon(
-                                Icons.send,
-                              ),
-                              onPressed: null,
-                            );
-                    },
-                    child: const SizedBox(),
-                  ),
-          ),
-          controller: textFieldController,
-          validator: (widget.messageType == MessageType.IMAGE_TEXT ||
-                  widget.messageType == MessageType.TEXT)
-              ? MultiValidator(
-                  [
-                    RequiredValidator(
-                      errorText: 'Message is required.',
+    return Container(
+      color: Colors.white,
+      child: Form(
+        key: _formKey,
+        child: ListTile(
+          title: widget.type == ChatFieldType.Update
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Updating Message'),
+                    IconButton(
+                      onPressed: widget.cancelEditMessage,
+                      icon: const Icon(
+                        Icons.cancel,
+                      ),
                     ),
                   ],
                 )
-              : MultiValidator([]),
+              : null,
+          subtitle: Container(
+            margin: const EdgeInsets.symmetric(
+              vertical: 10.0,
+              horizontal: 10.0,
+            ),
+            child: TextFormField(
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+              minLines: 1,
+              maxLines: 10,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                hintStyle: const TextStyle(
+                  color: Colors.white,
+                ),
+                hintText: 'Message...',
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                filled: true,
+                fillColor: Colors.blue,
+                labelText: '',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(
+                    15.0,
+                  ),
+                  borderSide: const BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                ),
+                prefixIcon: (widget.messageType == MessageType.TEXT &&
+                        widget.type == ChatFieldType.Create)
+                    ? OfflineBuilder(
+                        connectivityBuilder: (BuildContext context,
+                            ConnectivityResult value, Widget child) {
+                          bool connected = value != ConnectivityResult.none;
+
+                          return connected
+                              ? IconButton(
+                                  icon: const Icon(
+                                    Icons.photo,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: _onUploadImage,
+                                )
+                              : const IconButton(
+                                  icon: Icon(
+                                    Icons.photo,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: null,
+                                );
+                        },
+                        child: const SizedBox(),
+                      )
+                    : null,
+                suffixIcon: _loading
+                    ? const CircularProgressIndicator(
+                        color: Colors.grey,
+                      )
+                    : OfflineBuilder(
+                        connectivityBuilder: (BuildContext context,
+                            ConnectivityResult value, Widget child) {
+                          bool connected = value != ConnectivityResult.none;
+
+                          return connected
+                              ? IconButton(
+                                  icon: const Icon(
+                                    Icons.send,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: _onFormSubmit,
+                                )
+                              : const IconButton(
+                                  icon: Icon(
+                                    Icons.send,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: null,
+                                );
+                        },
+                        child: const SizedBox(),
+                      ),
+              ),
+              controller: textFieldController,
+              validator: (widget.messageType == MessageType.IMAGE_TEXT ||
+                      widget.messageType == MessageType.TEXT)
+                  ? MultiValidator(
+                      [
+                        RequiredValidator(
+                          errorText: 'Message is required.',
+                        ),
+                      ],
+                    )
+                  : MultiValidator([]),
+            ),
+          ),
         ),
       ),
     );

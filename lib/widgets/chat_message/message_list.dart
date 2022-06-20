@@ -5,10 +5,14 @@ import 'package:sonic_flutter/widgets/chat_message/message_bubble.widget.dart';
 
 class MessageList extends StatelessWidget {
   final Chat chat;
+  final Message? selectedMessage;
+  final Function onLongPress;
 
   const MessageList({
     Key? key,
     required this.chat,
+    required this.selectedMessage,
+    required this.onLongPress,
   }) : super(key: key);
 
   @override
@@ -17,7 +21,9 @@ class MessageList extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.only(
-        bottom: MediaQuery.of(context).size.height * 0.1,
+        bottom: selectedMessage != null
+            ? MediaQuery.of(context).size.height * 0.2
+            : MediaQuery.of(context).size.height * 0.15,
       ),
       child: ListView.builder(
         reverse: true,
@@ -28,6 +34,8 @@ class MessageList extends StatelessWidget {
           return MessageBubble(
             chat: chat,
             message: message,
+            selectedMessage: selectedMessage,
+            onLongPress: onLongPress,
           );
         },
       ),

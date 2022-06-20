@@ -355,6 +355,8 @@ class ChatService {
         "data": updateMessageDto.toJson(),
       };
 
+      log.i(body);
+
       // String version of JSON format of the body.
       String encodedBody = json.encode(body);
 
@@ -513,11 +515,13 @@ class ChatService {
         }
       case ERROR_EVENT:
         {
-          List<String> rawErrors = data['errors'];
+          List<dynamic> rawErrors = data['errors'];
           List<ChatError> errors = rawErrors
               .map((rawError) => ChatError.values.firstWhere((error) =>
                   error.toString().substring("ChatError.".length) == rawError))
               .toList();
+
+          log.i(rawErrors);
 
           chatErrorsStreams.add(errors);
           break;
