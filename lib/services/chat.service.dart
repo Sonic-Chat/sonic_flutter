@@ -765,13 +765,20 @@ class ChatService {
     chat.seen.add(loggedInAccount);
 
     chat.messages.sort(
-          (messageOne, messageTwo) => messageOne.createdAt.compareTo(
+      (messageOne, messageTwo) => messageOne.createdAt.compareTo(
         messageTwo.createdAt,
       ),
     );
 
     // Save the new chat to the device.
     syncChatToOfflineDb(chat);
+  }
+
+  /*
+   * Service Implementation for reacting to message updated confirmation event.
+   */
+  void handleUpdateMessageConfirmation(Map<String, dynamic> details) {
+    handleUpdateMessage(details);
   }
 
   /*
