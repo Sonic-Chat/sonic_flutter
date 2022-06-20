@@ -32,7 +32,7 @@ class ChatService {
   final FA.FirebaseAuth _firebaseAuth = FA.FirebaseAuth.instance;
   final Box<Chat> _chatDb = Hive.box<Chat>(CHAT_BOX);
   final StreamController<List<ChatError>> chatErrorsStreams =
-      StreamController();
+      StreamController.broadcast();
 
   late final IOWebSocketChannel ioWebSocketChannel;
 
