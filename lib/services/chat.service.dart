@@ -735,6 +735,46 @@ class ChatService {
   }
 
   /*
+   * Service Implementation for reacting to message sent confirmation event.
+   */
+  void handleMessageSentConfirmation(Map<String, dynamic> details) {
+    // Get the message model from the details.
+    Message newMessage = Message.fromJson(details['message']);
+
+    Account loggedInAccount = authService.fetchAccountFromOfflineDb()!;
+
+    // Fetch the chat from the device.
+    Chat? chat = fetchChatFromOfflineDb(details['chatId']);
+
+    // Throw an exception if chat does not exist.
+    if (chat == null) {
+      throw ChatException(
+        messages: [ChatError.CHAT_UID_ILLEGAL],
+      );
+    }
+
+    // Add new message.
+    chat.messages.add(newMessage);
+
+    // Adding self as delivered.
+    chat.delivered.clear();
+    chat.delivered.add(loggedInAccount);
+
+    // Adding self as seen.
+    chat.seen.clear();
+    chat.seen.add(loggedInAccount);
+
+    chat.messages.sort(
+          (messageOne, messageTwo) => messageOne.createdAt.compareTo(
+        messageTwo.createdAt,
+      ),
+    );
+
+    // Save the new chat to the device.
+    syncChatToOfflineDb(chat);
+  }
+
+  /*
    * Service implementation for saving chat in offline storage.
    */
   void syncChatToOfflineDb(Chat chat) {
