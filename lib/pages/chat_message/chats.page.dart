@@ -3,8 +3,10 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
+import 'package:sonic_flutter/enum/chat_error.enum.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
+import 'package:sonic_flutter/utils/display_snackbar.util.dart';
 import 'package:sonic_flutter/widgets/chat_message/chat_list.widget.dart';
 
 class Chats extends StatefulWidget {
@@ -25,6 +27,13 @@ class _ChatsState extends State<Chats> {
     super.initState();
 
     _chatService = Provider.of(context, listen: false);
+
+    _chatService.chatErrorsStreams.stream.listen((event) {
+      for (var element in event) {
+        String errorString = chatErrorStrings(element);
+        displaySnackBar(errorString, context);
+      }
+    });
   }
 
   @override
