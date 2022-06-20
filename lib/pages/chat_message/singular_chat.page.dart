@@ -230,19 +230,26 @@ class _SingularChatState extends State<SingularChat> {
                   onLongPress: _selectMessage,
                   selectedMessage: _message,
                 ),
-                if (seen)
+                if (seen && !delivered)
                   Container(
                     margin: EdgeInsets.only(
                       right: MediaQuery.of(context).size.width * 0.05,
                     ),
                     child: const Text('Seen'),
                   ),
-                if (delivered)
+                if (!seen && delivered)
                   Container(
                     margin: EdgeInsets.only(
                       right: MediaQuery.of(context).size.width * 0.05,
                     ),
                     child: const Text('Delivered'),
+                  ),
+                if (seen && delivered)
+                  Container(
+                    margin: EdgeInsets.only(
+                      right: MediaQuery.of(context).size.width * 0.05,
+                    ),
+                    child: const Text('Seen'),
                   ),
               ],
             ),
