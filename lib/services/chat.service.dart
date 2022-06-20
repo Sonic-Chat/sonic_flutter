@@ -508,11 +508,7 @@ class ChatService {
         }
       case SUCCESS_EVENT:
         {
-          if (data['message'] == 'SEEN') {
-            handleSeenConfirmation(data['details']);
-          } else {
-            log.i(data['message']);
-          }
+          handleSuccessEvents(data);
           break;
         }
       case ERROR_EVENT:
@@ -524,6 +520,42 @@ class ChatService {
               .toList();
 
           chatErrorsStreams.add(errors);
+          break;
+        }
+      default:
+        {
+          log.e(data);
+        }
+    }
+  }
+
+  void handleSuccessEvents(Map<String, dynamic> data) {
+    String eventType = data['message'];
+
+    switch (eventType) {
+      case CONNECTED:
+        {
+          log.i("CONNECTED");
+          break;
+        }
+      case MESSAGE_SENT:
+        {
+          handleMessageSentConfirmation(data['details']);
+          break;
+        }
+      case MESSAGE_UPDATED:
+        {
+          handleUpdateMessageConfirmation(data['details']);
+          break;
+        }
+      case MESSAGE_DELETED:
+        {
+          handleDeleteMessageConfirmation(data['details']);
+          break;
+        }
+      case SEEN:
+        {
+          handleSeenConfirmation(data['details']);
           break;
         }
       default:
@@ -633,7 +665,7 @@ class ChatService {
 
     // Sorting messages by creation date.
     chat.messages.sort(
-          (messageOne, messageTwo) => messageOne.createdAt.compareTo(
+      (messageOne, messageTwo) => messageOne.createdAt.compareTo(
         messageTwo.createdAt,
       ),
     );
@@ -666,7 +698,7 @@ class ChatService {
 
     // Sorting messages by creation date.
     chat.messages.sort(
-          (messageOne, messageTwo) => messageOne.createdAt.compareTo(
+      (messageOne, messageTwo) => messageOne.createdAt.compareTo(
         messageTwo.createdAt,
       ),
     );

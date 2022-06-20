@@ -7,6 +7,7 @@ const SEEN_EVENT = "mark-seen";
 const ERROR_EVENT = "error";
 const SUCCESS_EVENT = "success";
 
+const CONNECTED = 'CONNECTED';
 const MESSAGE_DELETED = "MESSAGE_DELETED";
 const MESSAGE_UPDATED = "MESSAGE_UPDATED";
 const MESSAGE_SENT = "MESSAGE_SENT";
