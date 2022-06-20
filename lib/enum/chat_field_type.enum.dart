@@ -1,0 +1,4 @@
+enum ChatFieldType {
+  Create,
+  Update,
+}

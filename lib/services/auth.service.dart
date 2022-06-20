@@ -90,7 +90,7 @@ class AuthService {
       log.wtf("Dedicated Server Offline");
 
       // Fetch account from Offline Storage.
-      Account? dbAccount = _fetchAccountFromOfflineDb();
+      Account? dbAccount = fetchAccountFromOfflineDb();
 
       // Return account if logged in else throw error.
       if (dbAccount != null) {
@@ -104,7 +104,7 @@ class AuthService {
       log.wtf("Dedicated Server Offline");
 
       // Fetch account from Offline Storage.
-      Account? dbAccount = _fetchAccountFromOfflineDb();
+      Account? dbAccount = fetchAccountFromOfflineDb();
 
       // Return account if logged in else throw error.
       if (dbAccount != null) {
@@ -119,7 +119,7 @@ class AuthService {
         log.wtf("Firebase Server Offline");
 
         // Fetch account from Offline Storage.
-        Account? dbAccount = _fetchAccountFromOfflineDb();
+        Account? dbAccount = fetchAccountFromOfflineDb();
 
         // Return account if logged in else throw error.
         if (dbAccount != null) {
@@ -307,7 +307,7 @@ class AuthService {
   /*
    * Service implementation for fetching user from offline storage.
    */
-  Account? _fetchAccountFromOfflineDb() {
+  Account? fetchAccountFromOfflineDb() {
     log.i("Fetching account from Hive DB");
     return _accountDb.get(LOGGED_IN_USER);
   }

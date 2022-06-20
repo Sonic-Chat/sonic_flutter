@@ -8,7 +8,7 @@ Future<String> uploadImageAndGenerateUrl(
   String folderName,
 ) async {
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-  Uuid uuid = Uuid();
+  Uuid uuid = const Uuid();
 
   String imageUuid = uuid.v4();
 
