@@ -631,6 +631,13 @@ class ChatService {
     // Update message.
     chat.messages[index] = updatedMessage;
 
+    // Sorting messages by creation date.
+    chat.messages.sort(
+          (messageOne, messageTwo) => messageOne.createdAt.compareTo(
+        messageTwo.createdAt,
+      ),
+    );
+
     // Save the updated chat to the device.
     syncChatToOfflineDb(chat);
   }
@@ -655,6 +662,13 @@ class ChatService {
     // Remove message from the chat.
     chat.messages.removeWhere(
       (element) => element.id == messageId,
+    );
+
+    // Sorting messages by creation date.
+    chat.messages.sort(
+          (messageOne, messageTwo) => messageOne.createdAt.compareTo(
+        messageTwo.createdAt,
+      ),
     );
 
     // Save the updated chat to the device.
@@ -779,6 +793,13 @@ class ChatService {
    */
   void handleUpdateMessageConfirmation(Map<String, dynamic> details) {
     handleUpdateMessage(details);
+  }
+
+  /*
+   * Service Implementation for reacting to message deleted confirmation event.
+   */
+  void handleDeleteMessageConfirmation(Map<String, dynamic> details) {
+    handleDeleteMessage(details);
   }
 
   /*
