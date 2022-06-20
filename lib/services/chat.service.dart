@@ -521,7 +521,7 @@ class ChatService {
                   error.toString().substring("ChatError.".length) == rawError))
               .toList();
 
-          log.i(rawErrors);
+          log.e(rawErrors);
 
           chatErrorsStreams.add(errors);
           break;
