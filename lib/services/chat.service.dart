@@ -509,7 +509,7 @@ class ChatService {
       case SUCCESS_EVENT:
         {
           if (data['message'] == 'SEEN') {
-            handleSelfSeen(data['details']);
+            handleSeenConfirmation(data['details']);
           } else {
             log.i(data['message']);
           }
@@ -714,7 +714,7 @@ class ChatService {
   /*
    * Service Implementation for reacting to seen confirmation event.
    */
-  void handleSelfSeen(Map<String, dynamic> details) {
+  void handleSeenConfirmation(Map<String, dynamic> details) {
     // Fetch the chat from the device.
     Chat? chat = fetchChatFromOfflineDb(details['chatId']);
 
