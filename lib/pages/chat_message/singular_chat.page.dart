@@ -161,6 +161,14 @@ class _SingularChatState extends State<SingularChat> {
         _friendAccount = chat.participants.firstWhere(
             (element) => element.id != _accountProvider.getAccount()!.id);
 
+        bool seen = chat.seen
+                .indexWhere((element) => element.id == _friendAccount!.id) >
+            0;
+
+        bool delivered = chat.delivered
+                .indexWhere((element) => element.id == _friendAccount!.id) >
+            0;
+
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
@@ -208,10 +216,36 @@ class _SingularChatState extends State<SingularChat> {
                       ]
                 : [],
           ),
-          body: MessageList(
-            chat: chat,
-            onLongPress: _selectMessage,
-            selectedMessage: _message,
+          body: Container(
+            margin: EdgeInsets.only(
+              bottom: _message != null
+                  ? MediaQuery.of(context).size.height * 0.2
+                  : MediaQuery.of(context).size.height * 0.15,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                MessageList(
+                  chat: chat,
+                  onLongPress: _selectMessage,
+                  selectedMessage: _message,
+                ),
+                if (seen)
+                  Container(
+                    margin: EdgeInsets.only(
+                      right: MediaQuery.of(context).size.width * 0.05,
+                    ),
+                    child: const Text('Seen'),
+                  ),
+                if (delivered)
+                  Container(
+                    margin: EdgeInsets.only(
+                      right: MediaQuery.of(context).size.width * 0.05,
+                    ),
+                    child: const Text('Delivered'),
+                  ),
+              ],
+            ),
           ),
           bottomSheet: ChatField(
             chatId: chat.id,

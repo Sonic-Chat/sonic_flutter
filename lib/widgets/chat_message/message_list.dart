@@ -19,12 +19,7 @@ class MessageList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Message> chatMessages = List.from(chat.messages.reversed);
 
-    return Container(
-      margin: EdgeInsets.only(
-        bottom: selectedMessage != null
-            ? MediaQuery.of(context).size.height * 0.2
-            : MediaQuery.of(context).size.height * 0.15,
-      ),
+    return Expanded(
       child: ListView.builder(
         reverse: true,
         shrinkWrap: true,
