@@ -10,6 +10,7 @@ import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
+import 'package:sonic_flutter/utils/display_snackbar.util.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 import 'package:sonic_flutter/widgets/chat_message/chat_field.widget.dart';
 import 'package:sonic_flutter/widgets/chat_message/message_list.dart';
@@ -33,6 +34,8 @@ class _SingularChatState extends State<SingularChat> {
   ChatFieldType _chatFieldType = ChatFieldType.Create;
   bool _messageSelected = false;
   Message? _message;
+
+  bool _loading = false;
 
   @override
   void initState() {
@@ -74,6 +77,62 @@ class _SingularChatState extends State<SingularChat> {
     setState(() {
       _messageSelected = false;
       _message = null;
+    });
+  }
+
+  void _confirmDelete() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Delete Message'),
+        content: const Text('Are you sure you want to delete this message?'),
+        actions: !_loading
+            ? [
+                TextButton(
+                  onPressed: _onDeleteMessage,
+                  child: const Text('Yes'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('No'),
+                ),
+              ]
+            : [
+                const CircularProgressIndicator(),
+              ],
+      ),
+    );
+  }
+
+  Future<void> _onDeleteMessage() async {
+    setState(() {
+      _loading = true;
+    });
+
+    try {
+      await _chatService.deleteMessage(
+        messageId: _message!.id,
+      );
+
+      Navigator.of(context).pop();
+
+      _unselectMessage();
+    } catch (error, stackTrace) {
+      log.e(
+        'Send Image Page Error',
+        error,
+        stackTrace,
+      );
+      displaySnackBar(
+        'Something went wrong, please try again later',
+        context,
+      );
+    }
+
+    setState(() {
+      _loading = false;
     });
   }
 
@@ -130,7 +189,7 @@ class _SingularChatState extends State<SingularChat> {
                         ),
                         IconButton(
                           icon: const Icon(Icons.delete),
-                          onPressed: () {},
+                          onPressed: _confirmDelete,
                         ),
                         IconButton(
                           icon: const Icon(Icons.cancel_outlined),
@@ -140,7 +199,7 @@ class _SingularChatState extends State<SingularChat> {
                     : [
                         IconButton(
                           icon: const Icon(Icons.delete),
-                          onPressed: () {},
+                          onPressed: _confirmDelete,
                         ),
                         IconButton(
                           icon: const Icon(Icons.cancel_outlined),
