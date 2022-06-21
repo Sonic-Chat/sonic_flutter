@@ -67,6 +67,7 @@ class _ProvidersState extends State<Providers> {
         ),
         Provider<ChatService>(
           create: (context) => ChatService(
+            apiUrl: widget.apiUrl,
             rawApiUrl: widget.rawApiUrl,
             authService: _authService,
           ),
