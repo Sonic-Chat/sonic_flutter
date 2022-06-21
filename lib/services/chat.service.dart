@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart' as FA;
+import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
 import 'package:sonic_flutter/constants/events.constant.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
 import 'package:sonic_flutter/dtos/chat_message/connect_server/connect_server.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/delete_message/delete_message.dto.dart';
+import 'package:sonic_flutter/dtos/chat_message/mark_delivered/mark_delivered.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/mark_seen/mark_seen.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/send_image/send_image.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/send_message/send_message.dto.dart';
@@ -28,6 +31,7 @@ import 'package:web_socket_channel/io.dart';
 
 class ChatService {
   final String rawApiUrl;
+  final String apiUrl;
 
   final FA.FirebaseAuth _firebaseAuth = FA.FirebaseAuth.instance;
   final Box<Chat> _chatDb = Hive.box<Chat>(CHAT_BOX);
@@ -39,6 +43,7 @@ class ChatService {
   final AuthService authService;
 
   ChatService({
+    required this.apiUrl,
     required this.rawApiUrl,
     required this.authService,
   });
@@ -836,6 +841,79 @@ class ChatService {
    */
   void handleDeleteMessageConfirmation(Map<String, dynamic> details) {
     handleDeleteMessage(details);
+  }
+
+  /*
+   * Service Implementation of marking chat delivered.
+   */
+  Future<void> httpMarkDelivered(
+    MarkDeliveredDto markDeliveredDto,
+  ) async {
+    try {
+      // Preparing the URL for the server request.
+      Uri url = Uri.parse("$apiUrl/api/v1/auth/credential");
+
+      // Preparing the headers for the request.
+      Map<String, String> headers = {
+        "Content-Type": "application/json",
+      };
+
+      // Preparing the body for the request
+      String body = json.encode(markDeliveredDto.toJson());
+
+      // Marking chat as delivered.
+      http.Response response = await http
+          .post(
+            url,
+            headers: headers,
+            body: body,
+          )
+          .timeout(const Duration(seconds: 10));
+
+      // Handling Errors.
+      if (response.statusCode >= 400 && response.statusCode < 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+        throw ChatException(
+            messages: ChatError.values
+                .where((error) =>
+                    error.toString().substring("ChatError.".length) ==
+                    body['message'])
+                .toList());
+      } else if (response.statusCode >= 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+
+        log.e(body["message"]);
+
+        throw GeneralException(
+          message: GeneralError.SOMETHING_WENT_WRONG,
+        );
+      }
+
+      // Decoding chat from JSON.
+      Chat chat = Chat.fromJson(json.decode(response.body));
+
+      // Updating chat on hive.
+      syncChatToOfflineDb(chat);
+    } on SocketException {
+      log.wtf("Dedicated Server Offline");
+      throw GeneralException(
+        message: GeneralError.OFFLINE,
+      );
+    } on TimeoutException {
+      log.wtf("Dedicated Server Offline");
+      throw GeneralException(
+        message: GeneralError.OFFLINE,
+      );
+    } on FA.FirebaseAuthException catch (error) {
+      if (error.code == "network-request-failed") {
+        log.wtf("Firebase Server Offline");
+        throw GeneralException(
+          message: GeneralError.OFFLINE,
+        );
+      } else {
+        rethrow;
+      }
+    }
   }
 
   /*

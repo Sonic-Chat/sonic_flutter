@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sonic_flutter/arguments/notification_action.argument.dart';
+import 'package:sonic_flutter/constants/notification_payload.constant.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/pages/home.page.dart';
@@ -11,7 +13,12 @@ import 'package:firebase_auth/firebase_auth.dart' as FA;
 import 'package:sonic_flutter/utils/logger.util.dart';
 
 class Splash extends StatefulWidget {
-  const Splash({Key? key}) : super(key: key);
+  final NotificationAction action;
+
+  const Splash({
+    Key? key,
+    required this.action,
+  }) : super(key: key);
 
   static const String route = "/splash";
 
@@ -80,7 +87,11 @@ class _SplashState extends State<Splash> {
     log.i("Server Logged In User");
 
     Provider.of<AccountProvider>(context, listen: false).saveAccount(account);
-    Navigator.of(context).pushReplacementNamed(Home.route);
+
+    Navigator.of(context).pushReplacementNamed(
+      Home.route,
+      arguments: widget.action,
+    );
   }
 
   _handleFirebaseStreamError(error, stackTrace) {

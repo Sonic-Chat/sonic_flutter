@@ -5,6 +5,7 @@ import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
 import 'package:sonic_flutter/services/credentials.service.dart';
 import 'package:sonic_flutter/services/friend_request.service.dart';
+import 'package:sonic_flutter/services/token.service.dart';
 import 'package:sonic_flutter/services/user_account.service.dart';
 
 class Providers extends StatefulWidget {
@@ -66,8 +67,14 @@ class _ProvidersState extends State<Providers> {
         ),
         Provider<ChatService>(
           create: (context) => ChatService(
+            apiUrl: widget.apiUrl,
             rawApiUrl: widget.rawApiUrl,
             authService: _authService,
+          ),
+        ),
+        Provider<TokenService>(
+          create: (context) => TokenService(
+            apiUrl: widget.apiUrl,
           ),
         ),
       ],
