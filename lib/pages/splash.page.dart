@@ -88,9 +88,10 @@ class _SplashState extends State<Splash> {
 
     Provider.of<AccountProvider>(context, listen: false).saveAccount(account);
 
-    log.i(widget.action);
-
-    Navigator.of(context).pushReplacementNamed(Home.route);
+    Navigator.of(context).pushReplacementNamed(
+      Home.route,
+      arguments: widget.action,
+    );
   }
 
   _handleFirebaseStreamError(error, stackTrace) {
