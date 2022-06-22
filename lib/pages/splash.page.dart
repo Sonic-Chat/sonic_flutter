@@ -7,6 +7,7 @@ import 'package:sonic_flutter/arguments/singular_chat.argument.dart';
 import 'package:sonic_flutter/constants/notification_payload.constant.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/pages/auth/login.page.dart';
+import 'package:sonic_flutter/pages/chat_message/chats.page.dart';
 import 'package:sonic_flutter/pages/chat_message/singular_chat.page.dart';
 import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
 import 'package:sonic_flutter/pages/home.page.dart';
@@ -116,10 +117,7 @@ class _SplashState extends State<Splash> {
       case CREATE_MESSAGE:
         {
           Navigator.of(context).pushReplacementNamed(
-            SingularChat.route,
-            arguments: SingularChatArgument(
-              chatId: notificationAction.chatId,
-            ),
+            Chats.route,
           );
           break;
         }
