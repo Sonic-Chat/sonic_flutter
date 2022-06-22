@@ -121,6 +121,14 @@ class _SingularChatState extends State<SingularChat> {
         (ModalRoute.of(context)!.settings.arguments as SingularChatArgument)
             .chatId;
 
+    _chatService
+        .markSeen(
+          chatId: chatId,
+        )
+        .then((value) => log.i("Marked chat $chatId seen."))
+        .catchError((error, stackTrace) =>
+            log.e("Singular Chat page Error", error, stackTrace));
+
     return ChangeNotifierProvider<SingularChatProvider>(
       create: (_) => SingularChatProvider(
         chatId: chatId,
