@@ -7,12 +7,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:sonic_flutter/arguments/message_image_upload.argument.dart';
 import 'package:sonic_flutter/arguments/send_image.argument.dart';
-import 'package:sonic_flutter/arguments/send_image.argument.dart';
 import 'package:sonic_flutter/enum/chat_field_type.enum.dart';
 import 'package:sonic_flutter/enum/message_type.enum.dart';
-import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/pages/chat_message/send_image.page.dart';
-import 'package:sonic_flutter/pages/chat_message/send_image.page.dart';
+import 'package:sonic_flutter/providers/singular_chat.provider.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
 import 'package:sonic_flutter/utils/display_snackbar.util.dart';
 import 'package:sonic_flutter/utils/image_picker.util.dart';
@@ -21,20 +19,12 @@ import 'package:sonic_flutter/utils/message_image_upload.util.dart';
 
 class ChatField extends StatefulWidget {
   final MessageType messageType;
-  final String chatId;
   final File? imageFile;
-  final ChatFieldType type;
-  final Message? message;
-  final VoidCallback cancelEditMessage;
 
   const ChatField({
     Key? key,
     this.messageType = MessageType.TEXT,
-    required this.chatId,
     this.imageFile,
-    required this.type,
-    this.message,
-    required this.cancelEditMessage,
   }) : super(key: key);
 
   @override
@@ -74,7 +64,7 @@ class _ChatFieldState extends State<ChatField> {
       Navigator.of(context).pushNamed(
         SendImage.route,
         arguments: SendImageArgument(
-          chatId: widget.chatId,
+          chatId: context.watch<SingularChatProvider>().chatId,
           file: imageFile,
         ),
       );
@@ -96,7 +86,7 @@ class _ChatFieldState extends State<ChatField> {
       Navigator.of(context).pushNamed(
         SendImage.route,
         arguments: SendImageArgument(
-          chatId: widget.chatId,
+          chatId: context.read<SingularChatProvider>().chatId,
           file: imageFile,
         ),
       );
@@ -160,7 +150,8 @@ class _ChatFieldState extends State<ChatField> {
     }
 
     try {
-      if (widget.type == ChatFieldType.Create) {
+      if (context.read<SingularChatProvider>().chatFieldType ==
+          ChatFieldType.Create) {
         if (sendMessageType == MessageType.IMAGE) {
           MessageImageUploadArgument messageImageUploadArgument =
               await messageImageUpload(
@@ -170,7 +161,7 @@ class _ChatFieldState extends State<ChatField> {
           await _chatService.sendImage(
             firebaseId: messageImageUploadArgument.firebaseId,
             imageUrl: messageImageUploadArgument.imageUrl,
-            chatId: widget.chatId,
+            chatId: context.watch<SingularChatProvider>().chatId,
           );
 
           Navigator.of(context).pop();
@@ -181,25 +172,29 @@ class _ChatFieldState extends State<ChatField> {
           );
 
           await _chatService.sendMessageImage(
-              firebaseId: messageImageUploadArgument.firebaseId,
-              imageUrl: messageImageUploadArgument.imageUrl,
-              chatId: widget.chatId,
-              message: textFieldController.text);
+            firebaseId: messageImageUploadArgument.firebaseId,
+            imageUrl: messageImageUploadArgument.imageUrl,
+            chatId: context.read<SingularChatProvider>().chatId,
+            message: textFieldController.text,
+          );
 
           Navigator.of(context).pop();
         } else if (sendMessageType == MessageType.TEXT) {
           await _chatService.sendTextMessage(
-              chatId: widget.chatId, message: textFieldController.text);
+            chatId: context.read<SingularChatProvider>().chatId,
+            message: textFieldController.text,
+          );
 
           textFieldController.clear();
         }
       } else {
         await _chatService.updateMessage(
           message: textFieldController.text,
-          messageId: widget.message!.id,
+          messageId: context.read<SingularChatProvider>().message!.id,
         );
 
-        widget.cancelEditMessage();
+        textFieldController.clear();
+        context.read<SingularChatProvider>().cancelEditMessage();
       }
     } catch (error, stackTrace) {
       log.e(
@@ -227,8 +222,11 @@ class _ChatFieldState extends State<ChatField> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.message != null && widget.type == ChatFieldType.Update) {
-      textFieldController.text = widget.message!.message!;
+    if (context.watch<SingularChatProvider>().message != null &&
+        context.watch<SingularChatProvider>().chatFieldType ==
+            ChatFieldType.Update) {
+      textFieldController.text =
+          context.watch<SingularChatProvider>().message!.message!;
     }
 
     return Container(
@@ -236,7 +234,8 @@ class _ChatFieldState extends State<ChatField> {
       child: Form(
         key: _formKey,
         child: ListTile(
-          title: widget.type == ChatFieldType.Update
+          title: context.watch<SingularChatProvider>().chatFieldType ==
+                  ChatFieldType.Update
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -244,7 +243,9 @@ class _ChatFieldState extends State<ChatField> {
                     IconButton(
                       onPressed: () {
                         textFieldController.text = '';
-                        widget.cancelEditMessage();
+                        context
+                            .read<SingularChatProvider>()
+                            .cancelEditMessage();
                       },
                       icon: const Icon(
                         Icons.cancel,
@@ -284,7 +285,8 @@ class _ChatFieldState extends State<ChatField> {
                   ),
                 ),
                 prefixIcon: (widget.messageType == MessageType.TEXT &&
-                        widget.type == ChatFieldType.Create)
+                        context.watch<SingularChatProvider>().chatFieldType ==
+                            ChatFieldType.Create)
                     ? OfflineBuilder(
                         connectivityBuilder: (BuildContext context,
                             ConnectivityResult value, Widget child) {
@@ -311,7 +313,7 @@ class _ChatFieldState extends State<ChatField> {
                     : null,
                 suffixIcon: _loading
                     ? const CircularProgressIndicator(
-                        color: Colors.grey,
+                        color: Colors.white,
                       )
                     : OfflineBuilder(
                         connectivityBuilder: (BuildContext context,
