@@ -98,6 +98,8 @@ class _SplashState extends State<Splash> {
     _chatService
         .connectServer()
         .then((_) => log.i("Connected to WebSocket Server"))
+        .then((_) => _chatService.syncMessage())
+        .then((_) => log.i("Synced all chats."))
         .catchError((error, stackTrace) =>
             log.e("Splash Page Error", error, stackTrace));
 
