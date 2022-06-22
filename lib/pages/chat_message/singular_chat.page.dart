@@ -10,6 +10,7 @@ import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
+import 'package:sonic_flutter/providers/singular_chat.provider.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
 import 'package:sonic_flutter/utils/display_snackbar.util.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
@@ -30,11 +31,6 @@ class _SingularChatState extends State<SingularChat> {
   late final ChatService _chatService;
   late final AccountProvider _accountProvider;
   Account? _friendAccount;
-  String? _chatId;
-
-  ChatFieldType _chatFieldType = ChatFieldType.Create;
-  bool _messageSelected = false;
-  Message? _message;
 
   bool _loading = false;
 
@@ -59,36 +55,7 @@ class _SingularChatState extends State<SingularChat> {
     });
   }
 
-  void _selectMessage(Message message) {
-    setState(() {
-      _messageSelected = true;
-      _message = message;
-    });
-  }
-
-  void _editMessage() {
-    setState(() {
-      _messageSelected = false;
-      _chatFieldType = ChatFieldType.Update;
-    });
-  }
-
-  void _cancelEditMessage() {
-    setState(() {
-      _messageSelected = false;
-      _message = null;
-      _chatFieldType = ChatFieldType.Create;
-    });
-  }
-
-  void _unselectMessage() {
-    setState(() {
-      _messageSelected = false;
-      _message = null;
-    });
-  }
-
-  void _confirmDelete() {
+  void _confirmDelete(SingularChatProvider singularChatProvider) {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -97,7 +64,9 @@ class _SingularChatState extends State<SingularChat> {
         actions: !_loading
             ? [
                 TextButton(
-                  onPressed: _onDeleteMessage,
+                  onPressed: () async => _onDeleteMessage(
+                    singularChatProvider,
+                  ),
                   child: const Text('Yes'),
                 ),
                 TextButton(
@@ -114,19 +83,21 @@ class _SingularChatState extends State<SingularChat> {
     );
   }
 
-  Future<void> _onDeleteMessage() async {
+  Future<void> _onDeleteMessage(
+    SingularChatProvider singularChatProvider,
+  ) async {
     setState(() {
       _loading = true;
     });
 
     try {
       await _chatService.deleteMessage(
-        messageId: _message!.id,
+        messageId: singularChatProvider.message!.id,
       );
 
       Navigator.of(context).pop();
 
-      _unselectMessage();
+      singularChatProvider.unselectMessage();
     } catch (error, stackTrace) {
       log.e(
         'Send Image Page Error',
@@ -146,130 +117,137 @@ class _SingularChatState extends State<SingularChat> {
 
   @override
   Widget build(BuildContext context) {
-    if (_chatId == null) {
-      SingularChatArgument singularChatArgument =
-          ModalRoute.of(context)!.settings.arguments as SingularChatArgument;
+    String chatId =
+        (ModalRoute.of(context)!.settings.arguments as SingularChatArgument)
+            .chatId;
 
-      _chatId = singularChatArgument.chatId;
+    _chatService
+        .markSeen(
+          chatId: chatId,
+        )
+        .then((value) => log.i("Marked chat $chatId seen."))
+        .catchError((error, stackTrace) =>
+            log.e("Singular Chat page Error", error, stackTrace));
 
-      _chatService
-          .markSeen(
-            chatId: _chatId!,
-          )
-          .then((value) => log.i("Marked chat $_chatId seen."))
-          .catchError((error, stackTrace) =>
-              log.e("Singular Chat page Error", error, stackTrace));
-    }
+    return ChangeNotifierProvider<SingularChatProvider>(
+      create: (_) => SingularChatProvider(
+        chatId: chatId,
+      ),
+      child: ValueListenableBuilder<Box<Chat>>(
+        valueListenable: Hive.box<Chat>(CHAT_BOX).listenable(),
+        builder: (BuildContext context, Box<Chat> box, Widget? widget) {
+          Chat chat = _chatService.fetchChatFromOfflineDb(chatId)!;
 
-    return ValueListenableBuilder<Box<Chat>>(
-      valueListenable: Hive.box<Chat>(CHAT_BOX).listenable(),
-      builder: (BuildContext context, Box<Chat> box, Widget? widget) {
-        Chat chat = _chatService.fetchChatFromOfflineDb(_chatId!)!;
+          _friendAccount = chat.participants.firstWhere(
+              (element) => element.id != _accountProvider.getAccount()!.id);
 
-        _friendAccount = chat.participants.firstWhere(
-            (element) => element.id != _accountProvider.getAccount()!.id);
+          bool seen = chat.seen
+                  .indexWhere((element) => element.id == _friendAccount!.id) >
+              0;
 
-        bool seen = chat.seen
-                .indexWhere((element) => element.id == _friendAccount!.id) >
-            0;
+          bool delivered = chat.delivered
+                  .indexWhere((element) => element.id == _friendAccount!.id) >
+              0;
 
-        bool delivered = chat.delivered
-                .indexWhere((element) => element.id == _friendAccount!.id) >
-            0;
-
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            elevation: 0,
-            leading: null,
-            automaticallyImplyLeading: false,
-            title: _messageSelected
-                ? const Text('Message Selected')
-                : ListTile(
-                    leading: ProfilePicture(
-                      imageUrl: _friendAccount!.imageUrl,
-                      size: MediaQuery.of(context).size.width * 0.1,
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              elevation: 0,
+              leading: null,
+              automaticallyImplyLeading: false,
+              title: context.watch<SingularChatProvider>().messageSelected
+                  ? const Text('Message Selected')
+                  : ListTile(
+                      leading: ProfilePicture(
+                        imageUrl: _friendAccount!.imageUrl,
+                        size: MediaQuery.of(context).size.width * 0.1,
+                      ),
+                      title: Text(
+                        _friendAccount!.fullName,
+                      ),
                     ),
-                    title: Text(
-                      _friendAccount!.fullName,
-                    ),
-                  ),
-            toolbarHeight: MediaQuery.of(context).size.height * 0.1,
-            actions: _messageSelected
-                ? (_message!.type == MessageType.TEXT ||
-                        _message!.type == MessageType.IMAGE_TEXT)
-                    ? [
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: _editMessage,
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: _confirmDelete,
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.cancel_outlined),
-                          onPressed: _unselectMessage,
-                        ),
-                      ]
-                    : [
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: _confirmDelete,
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.cancel_outlined),
-                          onPressed: _unselectMessage,
-                        ),
-                      ]
-                : [],
-          ),
-          body: Container(
-            margin: EdgeInsets.only(
-              bottom: _message != null
-                  ? MediaQuery.of(context).size.height * 0.2
-                  : MediaQuery.of(context).size.height * 0.15,
+              toolbarHeight: MediaQuery.of(context).size.height * 0.1,
+              actions: context.watch<SingularChatProvider>().messageSelected
+                  ? (context.watch<SingularChatProvider>().message!.type ==
+                              MessageType.TEXT ||
+                          context.watch<SingularChatProvider>().message!.type ==
+                              MessageType.IMAGE_TEXT)
+                      ? [
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: context
+                                .read<SingularChatProvider>()
+                                .editMessage,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () => _confirmDelete(
+                              context.read<SingularChatProvider>(),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.cancel_outlined),
+                            onPressed: context
+                                .read<SingularChatProvider>()
+                                .unselectMessage,
+                          ),
+                        ]
+                      : [
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () => _confirmDelete(
+                              context.read<SingularChatProvider>(),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.cancel_outlined),
+                            onPressed: context
+                                .read<SingularChatProvider>()
+                                .editMessage,
+                          ),
+                        ]
+                  : [],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                MessageList(
-                  chat: chat,
-                  onLongPress: _selectMessage,
-                  selectedMessage: _message,
-                ),
-                if (seen && !delivered)
-                  Container(
-                    margin: EdgeInsets.only(
-                      right: MediaQuery.of(context).size.width * 0.05,
-                    ),
-                    child: const Text('Seen'),
+            body: Container(
+              margin: EdgeInsets.only(
+                bottom: context.watch<SingularChatProvider>().message != null
+                    ? MediaQuery.of(context).size.height * 0.2
+                    : MediaQuery.of(context).size.height * 0.15,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  MessageList(
+                    chat: chat,
                   ),
-                if (!seen && delivered)
-                  Container(
-                    margin: EdgeInsets.only(
-                      right: MediaQuery.of(context).size.width * 0.05,
+                  if (seen && !delivered)
+                    Container(
+                      margin: EdgeInsets.only(
+                        right: MediaQuery.of(context).size.width * 0.05,
+                      ),
+                      child: const Text('Seen'),
                     ),
-                    child: const Text('Delivered'),
-                  ),
-                if (seen && delivered)
-                  Container(
-                    margin: EdgeInsets.only(
-                      right: MediaQuery.of(context).size.width * 0.05,
+                  if (!seen && delivered)
+                    Container(
+                      margin: EdgeInsets.only(
+                        right: MediaQuery.of(context).size.width * 0.05,
+                      ),
+                      child: const Text('Delivered'),
                     ),
-                    child: const Text('Seen'),
-                  ),
-              ],
+                  if (seen && delivered)
+                    Container(
+                      margin: EdgeInsets.only(
+                        right: MediaQuery.of(context).size.width * 0.05,
+                      ),
+                      child: const Text('Seen'),
+                    ),
+                ],
+              ),
             ),
-          ),
-          bottomSheet: ChatField(
-            chatId: chat.id,
-            type: _chatFieldType,
-            message: _message,
-            cancelEditMessage: _cancelEditMessage,
-          ),
-        );
-      },
+            bottomSheet: const ChatField(),
+          );
+        },
+      ),
     );
   }
 }

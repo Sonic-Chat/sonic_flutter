@@ -6,20 +6,17 @@ import 'package:sonic_flutter/enum/message_type.enum.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
+import 'package:sonic_flutter/providers/singular_chat.provider.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 
 class MessageBubble extends StatelessWidget {
   final Chat chat;
   final Message message;
-  final Message? selectedMessage;
-  final Function onLongPress;
 
   const MessageBubble({
     Key? key,
     required this.chat,
     required this.message,
-    required this.onLongPress,
-    required this.selectedMessage,
   }) : super(key: key);
 
   @override
@@ -30,15 +27,16 @@ class MessageBubble extends StatelessWidget {
         return InkWell(
           onLongPress: userCheck
               ? () {
-                  onLongPress(message);
+                  context.read<SingularChatProvider>().selectMessage(message);
                 }
               : null,
           child: Container(
             padding: const EdgeInsets.all(
               10.0,
             ),
-            color: selectedMessage != null
-                ? selectedMessage!.id == message.id
+            color: context.watch<SingularChatProvider>().message != null
+                ? context.watch<SingularChatProvider>().message!.id ==
+                        message.id
                     ? Colors.lightBlue.withOpacity(0.5)
                     : Colors.white
                 : Colors.white,

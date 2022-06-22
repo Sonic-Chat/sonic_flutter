@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sonic_flutter/arguments/send_image.argument.dart';
-import 'package:sonic_flutter/enum/chat_field_type.enum.dart';
 import 'package:sonic_flutter/enum/message_type.enum.dart';
+import 'package:sonic_flutter/providers/singular_chat.provider.dart';
 import 'package:sonic_flutter/widgets/chat_message/chat_field.widget.dart';
 
 class SendImage extends StatefulWidget {
@@ -23,23 +22,25 @@ class _SendImageState extends State<SendImage> {
     _sendImageArgument ??=
         ModalRoute.of(context)!.settings.arguments as SendImageArgument;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Send Image',
-        ),
-      ),
-      bottomSheet: ChatField(
+    return ChangeNotifierProvider(
+      create: (_) => SingularChatProvider(
         chatId: _sendImageArgument!.chatId,
-        messageType: MessageType.IMAGE,
-        imageFile: _sendImageArgument!.file,
-        type: ChatFieldType.Create,
-        cancelEditMessage: () {},
       ),
-      body: Center(
-        child: Image.file(
-          _sendImageArgument!.file,
-          width: MediaQuery.of(context).size.width,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Send Image',
+          ),
+        ),
+        bottomSheet: ChatField(
+          messageType: MessageType.IMAGE,
+          imageFile: _sendImageArgument!.file,
+        ),
+        body: Center(
+          child: Image.file(
+            _sendImageArgument!.file,
+            width: MediaQuery.of(context).size.width,
+          ),
         ),
       ),
     );

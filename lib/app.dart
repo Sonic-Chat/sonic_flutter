@@ -12,11 +12,8 @@ import 'package:sonic_flutter/pages/home.page.dart';
 import 'package:sonic_flutter/pages/splash.page.dart';
 
 class App extends StatelessWidget {
-  final NotificationAction action;
-
   const App({
     Key? key,
-    required this.action,
   }) : super(key: key);
 
   @override
@@ -29,9 +26,7 @@ class App extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       routes: {
-        Splash.route: (BuildContext context) => Splash(
-              action: action,
-            ),
+        Splash.route: (BuildContext context) => const Splash(),
         Register.route: (BuildContext context) => const Register(),
         Login.route: (BuildContext context) => const Login(),
         Home.route: (BuildContext context) => const Home(),
