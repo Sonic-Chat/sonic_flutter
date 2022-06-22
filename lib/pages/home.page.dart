@@ -105,13 +105,13 @@ class _HomeState extends State<Home> {
           ),
         );
 
-    log.i("Connecting to WebSocket Server");
-    _chatService
-        .connectServer()
-        .then((_) => _chatService.syncMessage())
-        .then((_) => log.i("Connected to WebSocket Server"))
-        .catchError(
-            (error, stackTrace) => log.e("Home Page Error", error, stackTrace));
+    // log.i("Connecting to WebSocket Server");
+    // _chatService
+    //     .connectServer()
+    //     .then((_) => _chatService.syncMessage())
+    //     .then((_) => log.i("Connected to WebSocket Server"))
+    //     .catchError(
+    //         (error, stackTrace) => log.e("Home Page Error", error, stackTrace));
   }
 
   @override

@@ -10,6 +10,7 @@ import 'package:sonic_flutter/pages/home.page.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FA;
+import 'package:sonic_flutter/services/chat.service.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 
 class Splash extends StatefulWidget {
@@ -30,12 +31,17 @@ class _SplashState extends State<Splash> {
   StreamSubscription? _streamSubscription;
 
   late final AuthService _authService;
+  late final ChatService _chatService;
 
   @override
   void initState() {
     super.initState();
 
     _authService = Provider.of<AuthService>(
+      context,
+      listen: false,
+    );
+    _chatService = Provider.of<ChatService>(
       context,
       listen: false,
     );
@@ -87,6 +93,13 @@ class _SplashState extends State<Splash> {
     log.i("Server Logged In User");
 
     Provider.of<AccountProvider>(context, listen: false).saveAccount(account);
+
+    log.i("Connecting to WebSocket Server");
+    _chatService
+        .connectServer()
+        .then((_) => log.i("Connected to WebSocket Server"))
+        .catchError((error, stackTrace) =>
+            log.e("Splash Page Error", error, stackTrace));
 
     Navigator.of(context).pushReplacementNamed(
       Home.route,
