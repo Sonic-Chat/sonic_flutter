@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sonic_flutter/arguments/notification_action.argument.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
+import 'package:sonic_flutter/providers/notification_action.provider.dart';
 import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
 import 'package:sonic_flutter/services/credentials.service.dart';
@@ -9,12 +11,14 @@ import 'package:sonic_flutter/services/token.service.dart';
 import 'package:sonic_flutter/services/user_account.service.dart';
 
 class Providers extends StatefulWidget {
+  final NotificationAction action;
   final Widget child;
   final String rawApiUrl;
   final String apiUrl;
 
   const Providers({
     Key? key,
+    required this.action,
     required this.child,
     required this.apiUrl,
     required this.rawApiUrl,
@@ -42,6 +46,11 @@ class _ProvidersState extends State<Providers> {
       providers: [
         ChangeNotifierProvider<AccountProvider>(
           create: (context) => AccountProvider(),
+        ),
+        ChangeNotifierProvider<NotificationActionProvider>(
+          create: (context) => NotificationActionProvider(
+            action: widget.action,
+          ),
         ),
         Provider<AuthService>(
           create: (context) => _authService,

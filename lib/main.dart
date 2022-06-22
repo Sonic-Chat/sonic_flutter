@@ -77,11 +77,10 @@ class Root extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Providers(
-      child: App(
-        action: notificationAction,
-      ),
+      child: const App(),
       apiUrl: "http://10.0.2.2:5000",
       rawApiUrl: "10.0.2.2:5000",
+      action: notificationAction,
     );
   }
 }
