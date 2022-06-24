@@ -117,7 +117,7 @@ class _SplashState extends State<Splash> {
       case CREATE_MESSAGE:
         {
           Navigator.of(context).pushReplacementNamed(
-            Chats.route,
+            Home.route,
           );
           break;
         }

@@ -10,8 +10,6 @@ import 'package:sonic_flutter/utils/display_snackbar.util.dart';
 import 'package:sonic_flutter/widgets/chat_message/chat_list.widget.dart';
 
 class Chats extends StatefulWidget {
-  static const route = "/chats";
-
   const Chats({Key? key}) : super(key: key);
 
   @override
@@ -40,7 +38,13 @@ class _ChatsState extends State<Chats> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sonic Chat 🚀'),
+        title: const Text(
+          'Sonic Chat 🚀',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blue,
       ),
       body: ValueListenableBuilder<Box<Chat>>(
         valueListenable: Hive.box<Chat>(CHAT_BOX).listenable(),
