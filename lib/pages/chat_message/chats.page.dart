@@ -8,7 +8,9 @@ import 'package:sonic_flutter/enum/chat_error.enum.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/pages/account/account_update.page.dart';
 import 'package:sonic_flutter/pages/account/search.page.dart';
+import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
+import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
 import 'package:sonic_flutter/utils/display_snackbar.util.dart';
 import 'package:sonic_flutter/widgets/chat_message/chat_list.widget.dart';
@@ -22,6 +24,7 @@ class Chats extends StatefulWidget {
 
 class _ChatsState extends State<Chats> {
   late final ChatService _chatService;
+  late final AuthService _authService;
   List<Chat> chats = [];
 
   @override
@@ -29,6 +32,7 @@ class _ChatsState extends State<Chats> {
     super.initState();
 
     _chatService = Provider.of(context, listen: false);
+    _authService = Provider.of(context, listen: false);
 
     _chatService.chatErrorsStreams.stream.listen((event) {
       for (var element in event) {
@@ -75,16 +79,21 @@ class _ChatsState extends State<Chats> {
               ),
               const PopupMenuItem(
                 child: Text("Log Out"),
-                value: AccountPopup.settings,
+                value: AccountPopup.logOut,
               ),
             ],
-            onSelected: (AccountPopup? selected) {
+            onSelected: (AccountPopup? selected) async {
               if (selected == AccountPopup.settings) {
                 Navigator.of(context).pushNamed(
                   AccountUpdate.route,
                 );
               }
-              if (selected == AccountPopup.logOut) {}
+              if (selected == AccountPopup.logOut) {
+                await _authService.logOut();
+                Navigator.of(context).pushReplacementNamed(
+                  Login.route,
+                );
+              }
             },
           )
         ],
