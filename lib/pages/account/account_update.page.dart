@@ -15,6 +15,15 @@ class AccountUpdate extends StatelessWidget {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
           title: const Text(
             'Update Your Profile',
             style: TextStyle(
