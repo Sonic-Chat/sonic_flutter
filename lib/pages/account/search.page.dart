@@ -25,7 +25,22 @@ class _SearchState extends State<Search> {
         child: AppBar(
           toolbarHeight: MediaQuery.of(context).size.height * 0.2,
           automaticallyImplyLeading: false,
+          backgroundColor: Colors.blue,
           title: CupertinoSearchTextField(
+            prefixIcon: const Icon(
+              Icons.search,
+              color: Colors.white,
+            ),
+            suffixIcon: const Icon(
+              CupertinoIcons.xmark_circle_fill,
+              color: Colors.white,
+            ),
+            placeholderStyle: const TextStyle(
+              color: Colors.white,
+            ),
+            style: const TextStyle(
+              color: Colors.white,
+            ),
             onChanged: (String text) {
               setState(() {
                 _searchQuery = text == '' ? 'empty' : text;

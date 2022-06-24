@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
 import 'package:sonic_flutter/enum/chat_error.enum.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
+import 'package:sonic_flutter/pages/account/search.page.dart';
 import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
 import 'package:sonic_flutter/utils/display_snackbar.util.dart';
@@ -46,6 +47,19 @@ class _ChatsState extends State<Chats> {
           ),
         ),
         backgroundColor: Colors.blue,
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.search,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pushNamed(
+                Search.route,
+              );
+            },
+          )
+        ],
       ),
       body: ValueListenableBuilder<Box<Chat>>(
         valueListenable: Hive.box<Chat>(CHAT_BOX).listenable(),
