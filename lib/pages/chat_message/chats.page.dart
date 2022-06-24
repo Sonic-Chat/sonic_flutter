@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
 import 'package:sonic_flutter/enum/chat_error.enum.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
+import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
 import 'package:sonic_flutter/utils/display_snackbar.util.dart';
 import 'package:sonic_flutter/widgets/chat_message/chat_list.widget.dart';
@@ -60,6 +61,16 @@ class _ChatsState extends State<Chats> {
             chats: chats,
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(
+            FriendRequest.route,
+          );
+        },
+        child: const Icon(
+          Icons.message,
+        ),
       ),
     );
   }
