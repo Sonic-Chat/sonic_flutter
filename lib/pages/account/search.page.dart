@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
+import 'package:sonic_flutter/animations/offline.animation.dart';
 import 'package:sonic_flutter/widgets/user_account/user_search.widget.dart';
 
 class Search extends StatefulWidget {
@@ -61,7 +62,9 @@ class _SearchState extends State<Search> {
               ? UserSearch(
                   query: _searchQuery,
                 )
-              : const Text('You are offline');
+              : const Offline(
+                  message: 'You are offline',
+                );
         },
         child: const SizedBox(),
       ),
