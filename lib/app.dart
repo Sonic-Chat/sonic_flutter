@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sonic_flutter/arguments/notification_action.argument.dart';
 import 'package:sonic_flutter/pages/account/account_update.page.dart';
 import 'package:sonic_flutter/pages/account/search.page.dart';
 import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/pages/auth/register.page.dart';
-import 'package:sonic_flutter/pages/chat_message/chats.page.dart';
 import 'package:sonic_flutter/pages/chat_message/send_image.page.dart';
 import 'package:sonic_flutter/pages/chat_message/singular_chat.page.dart';
 import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
@@ -33,7 +31,6 @@ class App extends StatelessWidget {
         AccountUpdate.route: (BuildContext context) => const AccountUpdate(),
         Search.route: (BuildContext context) => const Search(),
         FriendRequest.route: (BuildContext context) => const FriendRequest(),
-        Chats.route: (BuildContext context) => const Chats(),
         SingularChat.route: (BuildContext context) => const SingularChat(),
         SendImage.route: (BuildContext context) => const SendImage(),
       },

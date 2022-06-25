@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sonic_flutter/animations/loading.animation.dart';
 import 'package:sonic_flutter/arguments/notification_action.argument.dart';
 import 'package:sonic_flutter/arguments/singular_chat.argument.dart';
 import 'package:sonic_flutter/constants/notification_payload.constant.dart';
@@ -117,7 +118,7 @@ class _SplashState extends State<Splash> {
       case CREATE_MESSAGE:
         {
           Navigator.of(context).pushReplacementNamed(
-            Chats.route,
+            Home.route,
           );
           break;
         }
@@ -169,7 +170,9 @@ class _SplashState extends State<Splash> {
               "assets/img/app-icon.png",
               width: MediaQuery.of(context).size.width * 0.5,
             ),
-            const CircularProgressIndicator(),
+            const Loading(
+              message: '',
+            ),
           ],
         ),
       ),

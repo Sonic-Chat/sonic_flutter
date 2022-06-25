@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sonic_flutter/dtos/friend_request/fetch_friend_requests/fetch_friend_requests.dto.dart';
 import 'package:sonic_flutter/dtos/notifications/save_token/save_token.dto.dart';
-import 'package:sonic_flutter/pages/account/account_update.page.dart';
-import 'package:sonic_flutter/pages/account/search.page.dart';
 import 'package:sonic_flutter/pages/chat_message/chats.page.dart';
-import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
 import 'package:sonic_flutter/services/friend_request.service.dart';
 import 'package:sonic_flutter/services/token.service.dart';
 import 'package:sonic_flutter/utils/check_connectivity.util.dart';
@@ -95,52 +92,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Sonic Chat"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Hello from Home Page',
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  AccountUpdate.route,
-                );
-              },
-              child: const Text('Update Account'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  Search.route,
-                );
-              },
-              child: const Text('Search'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  FriendRequest.route,
-                );
-              },
-              child: const Text('Friends'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  Chats.route,
-                );
-              },
-              child: const Text('Chats'),
-            ),
-          ],
-        ),
-      ),
-    );
+    return const Chats();
   }
 }

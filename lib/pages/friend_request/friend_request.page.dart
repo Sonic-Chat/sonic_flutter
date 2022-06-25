@@ -13,7 +13,22 @@ class FriendRequest extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Friends'),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          title: const Text(
+            'Friends',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.blue,
           bottom: TabBar(
             tabs: [
               Tab(
@@ -21,7 +36,6 @@ class FriendRequest extends StatelessWidget {
                   'Your Friends',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.black,
                     fontSize: MediaQuery.of(context).size.longestSide * 0.02,
                   ),
                 ),
@@ -31,7 +45,6 @@ class FriendRequest extends StatelessWidget {
                   'Sent Requests',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.black,
                     fontSize: MediaQuery.of(context).size.longestSide * 0.02,
                   ),
                 ),
@@ -41,7 +54,6 @@ class FriendRequest extends StatelessWidget {
                   'Friend Requests',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.black,
                     fontSize: MediaQuery.of(context).size.longestSide * 0.02,
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sonic_flutter/animations/not_found.animation.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/widgets/chat_message/message_bubble.widget.dart';
@@ -16,18 +17,22 @@ class MessageList extends StatelessWidget {
     List<Message> chatMessages = List.from(chat.messages.reversed);
 
     return Expanded(
-      child: ListView.builder(
-        reverse: true,
-        shrinkWrap: true,
-        itemCount: chat.messages.length,
-        itemBuilder: (context, index) {
-          Message message = chatMessages[index];
-          return MessageBubble(
-            chat: chat,
-            message: message,
-          );
-        },
-      ),
+      child: chat.messages.isNotEmpty
+          ? ListView.builder(
+              reverse: true,
+              shrinkWrap: true,
+              itemCount: chat.messages.length,
+              itemBuilder: (context, index) {
+                Message message = chatMessages[index];
+                return MessageBubble(
+                  chat: chat,
+                  message: message,
+                );
+              },
+            )
+          : const NotFound(
+              message: 'No messages present',
+            ),
     );
   }
 }

@@ -15,15 +15,30 @@ class AccountUpdate extends StatelessWidget {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Update Your Profile'),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          title: const Text(
+            'Update Your Profile',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.blue,
           bottom: TabBar(
+            indicatorColor: Colors.white10,
             tabs: [
               Tab(
                 child: Text(
                   'Account Details',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.black,
                     fontSize: MediaQuery.of(context).size.longestSide * 0.02,
                   ),
                 ),
@@ -33,7 +48,6 @@ class AccountUpdate extends StatelessWidget {
                   'Email Details',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.black,
                     fontSize: MediaQuery.of(context).size.longestSide * 0.02,
                   ),
                 ),
@@ -43,7 +57,6 @@ class AccountUpdate extends StatelessWidget {
                   'Password Details',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.black,
                     fontSize: MediaQuery.of(context).size.longestSide * 0.02,
                   ),
                 ),
@@ -53,7 +66,6 @@ class AccountUpdate extends StatelessWidget {
                   'Delete Account',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.black,
                     fontSize: MediaQuery.of(context).size.longestSide * 0.02,
                   ),
                 ),

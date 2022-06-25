@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sonic_flutter/animations/error_occured.animation.dart';
+import 'package:sonic_flutter/animations/loading.animation.dart';
 import 'package:sonic_flutter/dtos/credentials/search_credentials/search_credentials.dto.dart';
 import 'package:sonic_flutter/models/public_credentials/public_credentials.model.dart';
 import 'package:sonic_flutter/services/credentials.service.dart';
@@ -44,7 +46,9 @@ class _UserSearchState extends State<UserSearch> {
         if (snapshot.hasError) {
           log.e(snapshot.error, snapshot.error, snapshot.stackTrace);
 
-          return const Text('Something went wrong, please try again later');
+          return const ErrorOccurred(
+            message: 'Something went wrong, please try again later',
+          );
         }
 
         if (snapshot.connectionState == ConnectionState.done) {
@@ -54,7 +58,9 @@ class _UserSearchState extends State<UserSearch> {
         }
 
         return _credentials == null
-            ? const Text('Searching for users')
+            ? const Loading(
+                message: 'Searching for users',
+              )
             : _buildUserList();
       },
     );
