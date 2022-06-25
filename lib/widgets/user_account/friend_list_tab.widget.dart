@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sonic_flutter/animations/error_occured.animation.dart';
 import 'package:sonic_flutter/animations/loading.animation.dart';
 import 'package:sonic_flutter/dtos/friend_request/fetch_friend_requests/fetch_friend_requests.dto.dart';
 import 'package:sonic_flutter/enum/friend_status.enum.dart';
@@ -62,8 +63,8 @@ class _FriendListTabState extends State<FriendListTab> {
                   snapshot.error,
                   snapshot.stackTrace,
                 );
-                return const Text(
-                  "Something went wrong, please try again later",
+                return const ErrorOccured(
+                  message: "Something went wrong, please try again later",
                 );
               }
           }
