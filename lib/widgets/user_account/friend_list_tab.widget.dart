@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sonic_flutter/animations/loading.animation.dart';
 import 'package:sonic_flutter/dtos/friend_request/fetch_friend_requests/fetch_friend_requests.dto.dart';
 import 'package:sonic_flutter/enum/friend_status.enum.dart';
 import 'package:sonic_flutter/enum/general_error.enum.dart';
@@ -74,7 +75,11 @@ class _FriendListTabState extends State<FriendListTab> {
           return _buildList();
         }
 
-        return _requests == null ? _onLoadingData() : _buildList();
+        return _requests == null
+            ? const Loading(
+                message: 'Fetching requests',
+              )
+            : _buildList();
       },
     );
   }
@@ -83,18 +88,11 @@ class _FriendListTabState extends State<FriendListTab> {
     return widget.status == FriendStatus.REQUESTED_TO_YOU
         ? NewRequestList(
             users: _requests!,
-        refreshStatus: () {
-          setState(() {});
-        }
-          )
+            refreshStatus: () {
+              setState(() {});
+            })
         : UserFriendList(
             users: _requests!,
           );
-  }
-
-  Widget _onLoadingData() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
   }
 }
