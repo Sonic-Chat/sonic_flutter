@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sonic_flutter/animations/not_found.animation.dart';
 import 'package:sonic_flutter/models/friend_request/friend_request.model.dart';
 import 'package:sonic_flutter/widgets/user_account/new_request.widget.dart';
 
@@ -14,18 +15,20 @@ class NewRequestList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: users.length,
-      itemBuilder: (BuildContext context, int index) {
-        FriendRequest friendRequest = users[index];
+    return users.isNotEmpty
+        ? ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: users.length,
+            itemBuilder: (BuildContext context, int index) {
+              FriendRequest friendRequest = users[index];
 
-        return NewRequest(
-          friendRequest: friendRequest,
-            refreshStatus: refreshStatus
-        );
-      },
-    );
+              return NewRequest(
+                  friendRequest: friendRequest, refreshStatus: refreshStatus);
+            },
+          )
+        : const NotFound(
+            message: 'No requests found.',
+          );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sonic_flutter/animations/not_found.animation.dart';
 import 'package:sonic_flutter/models/public_credentials/public_credentials.model.dart';
 import 'package:sonic_flutter/widgets/user_account/user_list_item.widget.dart';
 
@@ -12,17 +13,23 @@ class UserList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: users.length,
-      itemBuilder: (BuildContext context, int index) {
-        PublicCredentials publicCredentials = users[index];
+    return SingleChildScrollView(
+      child: users.isNotEmpty
+          ? ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: users.length,
+              itemBuilder: (BuildContext context, int index) {
+                PublicCredentials publicCredentials = users[index];
 
-        return UserListItem(
-          publicCredentials: publicCredentials,
-        );
-      },
+                return UserListItem(
+                  publicCredentials: publicCredentials,
+                );
+              },
+            )
+          : const NotFound(
+              message: 'No users found.',
+            ),
     );
   }
 }
