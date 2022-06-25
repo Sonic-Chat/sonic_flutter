@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class ErrorOccured extends StatelessWidget {
+class ErrorOccurred extends StatelessWidget {
   final String message;
 
-  const ErrorOccured({
+  const ErrorOccurred({
     Key? key,
     required this.message,
   }) : super(key: key);

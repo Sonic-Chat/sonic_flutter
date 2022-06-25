@@ -63,7 +63,7 @@ class _FriendListTabState extends State<FriendListTab> {
                   snapshot.error,
                   snapshot.stackTrace,
                 );
-                return const ErrorOccured(
+                return const ErrorOccurred(
                   message: "Something went wrong, please try again later",
                 );
               }

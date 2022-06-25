@@ -46,7 +46,7 @@ class _UserSearchState extends State<UserSearch> {
         if (snapshot.hasError) {
           log.e(snapshot.error, snapshot.error, snapshot.stackTrace);
 
-          return const ErrorOccured(
+          return const ErrorOccurred(
             message: 'Something went wrong, please try again later',
           );
         }
