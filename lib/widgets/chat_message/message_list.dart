@@ -16,25 +16,23 @@ class MessageList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Message> chatMessages = List.from(chat.messages.reversed);
 
-    return SingleChildScrollView(
-      child: Expanded(
-        child: chat.messages.isNotEmpty
-            ? ListView.builder(
-                reverse: true,
-                shrinkWrap: true,
-                itemCount: chat.messages.length,
-                itemBuilder: (context, index) {
-                  Message message = chatMessages[index];
-                  return MessageBubble(
-                    chat: chat,
-                    message: message,
-                  );
-                },
-              )
-            : const NotFound(
-                message: 'No messages present',
-              ),
-      ),
+    return Expanded(
+      child: chat.messages.isNotEmpty
+          ? ListView.builder(
+              reverse: true,
+              shrinkWrap: true,
+              itemCount: chat.messages.length,
+              itemBuilder: (context, index) {
+                Message message = chatMessages[index];
+                return MessageBubble(
+                  chat: chat,
+                  message: message,
+                );
+              },
+            )
+          : const NotFound(
+              message: 'No messages present',
+            ),
     );
   }
 }
