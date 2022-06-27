@@ -754,12 +754,11 @@ class ChatService {
       );
     }
 
-    // Marking all as seen.
-    chat.seen.clear();
-
-    for (var account in chat.participants) {
-      chat.seen.add(account);
-    }
+    // Adding seen account details.
+    String accountId = details['byUser'];
+    Account account =
+        chat.participants.firstWhere((element) => element.id == accountId);
+    chat.seen.add(account);
 
     // Save the updated chat to the device.
     syncChatToOfflineDb(chat);
