@@ -730,12 +730,11 @@ class ChatService {
       );
     }
 
-    // Marking all as delivered.
-    chat.delivered.clear();
-
-    for (var account in chat.participants) {
-      chat.delivered.add(account);
-    }
+    // Adding delivered account details.
+    String accountId = details['byUser'];
+    Account account =
+        chat.participants.firstWhere((element) => element.id == accountId);
+    chat.delivered.add(account);
 
     // Save the updated chat to the device.
     syncChatToOfflineDb(chat);
