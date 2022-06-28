@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
+import 'package:sonic_flutter/enum/chat_type.enum.dart';
 import 'package:sonic_flutter/enum/friend_status.enum.dart';
 import 'package:sonic_flutter/enum/message_type.enum.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
@@ -25,6 +26,7 @@ Future<void> hiveStartup() async {
   Hive.registerAdapter<Image>(ImageAdapter());
   Hive.registerAdapter<Message>(MessageAdapter());
   Hive.registerAdapter<Chat>(ChatAdapter());
+  Hive.registerAdapter<ChatType>(ChatTypeAdapter());
   log.i("Registered Hive Adaptors");
 
   log.i("Opening Hive Boxes");
