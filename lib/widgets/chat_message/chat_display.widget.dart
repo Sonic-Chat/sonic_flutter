@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sonic_flutter/arguments/singular_chat.argument.dart';
+import 'package:sonic_flutter/enum/chat_type.enum.dart';
 import 'package:sonic_flutter/enum/message_type.enum.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
@@ -51,23 +52,30 @@ class _ChatDisplayState extends State<ChatDisplay> {
 
     if (widget.chat.messages.isNotEmpty) {
       Message lastMessage = widget.chat.messages.last;
+      Account account = lastMessage.sentBy;
 
       dateTime = lastMessage.createdAt;
 
       switch (lastMessage.type) {
         case MessageType.IMAGE:
           {
-            body = '📸 Image';
+            body = widget.chat.type == ChatType.GROUP
+                ? '${account.fullName.split(" ")[0]}: 📸 Image'
+                : '📸 Image';
             break;
           }
         case MessageType.IMAGE_TEXT:
           {
-            body = '📸 ${lastMessage.message!}';
+            body = widget.chat.type == ChatType.GROUP
+                ? '${account.fullName.split(" ")[0]}: 📸 ${lastMessage.message!}'
+                : '📸 ${lastMessage.message!}';
             break;
           }
         case MessageType.TEXT:
           {
-            body = lastMessage.message!;
+            body = widget.chat.type == ChatType.GROUP
+                ? '${account.fullName.split(" ")[0]}: ${lastMessage.message!}'
+                : lastMessage.message!;
             break;
           }
         default:
@@ -86,15 +94,20 @@ class _ChatDisplayState extends State<ChatDisplay> {
           SingularChat.route,
           arguments: SingularChatArgument(
             chatId: widget.chat.id,
+            type: widget.chat.type,
           ),
         );
       },
       leading: ProfilePicture(
-        imageUrl: _friendAccount.imageUrl,
+        imageUrl: widget.chat.type == ChatType.SINGLE
+            ? _friendAccount.imageUrl
+            : widget.chat.imageUrl,
         size: MediaQuery.of(context).size.width * 0.1,
       ),
       title: Text(
-        _friendAccount.fullName,
+        widget.chat.type == ChatType.SINGLE
+            ? _friendAccount.fullName
+            : widget.chat.name,
         style: TextStyle(
           fontWeight: _isSeen ? FontWeight.normal : FontWeight.bold,
         ),
