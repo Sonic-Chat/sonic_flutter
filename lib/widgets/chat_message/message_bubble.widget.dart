@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sonic_flutter/enum/chat_type.enum.dart';
 import 'package:sonic_flutter/enum/message_type.enum.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
@@ -21,9 +22,14 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AccountProvider>(
-      builder: (BuildContext context, AccountProvider state, _) {
-        bool userCheck = message.sentBy.id == state.getAccount()!.id;
+    return Consumer2<AccountProvider, SingularChatProvider>(
+      builder: (
+        BuildContext context,
+        AccountProvider accountProvider,
+        SingularChatProvider singularChatProvider,
+        _,
+      ) {
+        bool userCheck = message.sentBy.id == accountProvider.getAccount()!.id;
         return InkWell(
           onLongPress: userCheck
               ? () {
@@ -50,7 +56,7 @@ class MessageBubble extends StatelessWidget {
                     10.0,
                   ),
                   decoration: BoxDecoration(
-                    color: userCheck ? Colors.blue : Colors.white,
+                    color: userCheck ? Colors.blue : Colors.white30,
                     borderRadius: BorderRadius.circular(
                       20.0,
                     ),
@@ -58,89 +64,105 @@ class MessageBubble extends StatelessWidget {
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width * 0.5,
                   ),
-                  child: message.type == MessageType.TEXT
-                      ? Text(
-                          message.message!,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (singularChatProvider.type == ChatType.GROUP &&
+                          !userCheck)
+                        Text(
+                          message.sentBy.fullName,
                           style: TextStyle(
                             color: userCheck ? Colors.white : Colors.black,
                           ),
-                        )
-                      : message.type == MessageType.IMAGE_TEXT
-                          ? Container(
-                              width: MediaQuery.of(context).size.width * 0.5,
-                              constraints: BoxConstraints(
-                                minHeight:
-                                    MediaQuery.of(context).size.width * 0.5,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CachedNetworkImage(
-                                    imageUrl: message.image!.imageUrl,
-                                    fit: BoxFit.fill,
-                                    progressIndicatorBuilder:
-                                        (context, url, downloadProgress) {
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          value: downloadProgress.progress,
-                                        ),
-                                      );
-                                    },
-                                    errorWidget: (context, url, error) {
-                                      log.e(error);
-                                      return const Icon(Icons.error);
-                                    },
-                                    imageBuilder: (context, imageProvider) =>
-                                        ClipRRect(
-                                      borderRadius: BorderRadius.circular(
-                                        20.0,
-                                      ),
-                                      child: Image(
-                                        image: imageProvider,
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      message.message!,
-                                      style: TextStyle(
-                                        color: userCheck
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                        ),
+                      message.type == MessageType.TEXT
+                          ? Text(
+                              message.message!,
+                              style: TextStyle(
+                                color: userCheck ? Colors.white : Colors.black,
                               ),
                             )
-                          : CachedNetworkImage(
-                              imageUrl: message.image!.imageUrl,
-                              fit: BoxFit.fill,
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    value: downloadProgress.progress,
+                          : message.type == MessageType.IMAGE_TEXT
+                              ? Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  constraints: BoxConstraints(
+                                    minHeight:
+                                        MediaQuery.of(context).size.width * 0.5,
                                   ),
-                                );
-                              },
-                              errorWidget: (context, url, error) {
-                                log.e(error);
-                                return const Icon(Icons.error);
-                              },
-                              imageBuilder: (context, imageProvider) =>
-                                  ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                  20.0,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CachedNetworkImage(
+                                        imageUrl: message.image!.imageUrl,
+                                        fit: BoxFit.fill,
+                                        progressIndicatorBuilder:
+                                            (context, url, downloadProgress) {
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value: downloadProgress.progress,
+                                            ),
+                                          );
+                                        },
+                                        errorWidget: (context, url, error) {
+                                          log.e(error);
+                                          return const Icon(Icons.error);
+                                        },
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            20.0,
+                                          ),
+                                          child: Image(
+                                            image: imageProvider,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          message.message!,
+                                          style: TextStyle(
+                                            color: userCheck
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : CachedNetworkImage(
+                                  imageUrl: message.image!.imageUrl,
+                                  fit: BoxFit.fill,
+                                  progressIndicatorBuilder:
+                                      (context, url, downloadProgress) {
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        value: downloadProgress.progress,
+                                      ),
+                                    );
+                                  },
+                                  errorWidget: (context, url, error) {
+                                    log.e(error);
+                                    return const Icon(Icons.error);
+                                  },
+                                  imageBuilder: (context, imageProvider) =>
+                                      ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                      20.0,
+                                    ),
+                                    child: Image(
+                                      image: imageProvider,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
                                 ),
-                                child: Image(
-                                  image: imageProvider,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
+                    ],
+                  ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(

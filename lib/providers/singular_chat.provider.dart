@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sonic_flutter/enum/chat_field_type.enum.dart';
+import 'package:sonic_flutter/enum/chat_type.enum.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 
 class SingularChatProvider with ChangeNotifier {
@@ -7,9 +8,11 @@ class SingularChatProvider with ChangeNotifier {
   ChatFieldType chatFieldType = ChatFieldType.Create;
   bool messageSelected = false;
   Message? message;
+  ChatType type;
 
   SingularChatProvider({
     required this.chatId,
+    this.type = ChatType.SINGLE,
   });
 
   void selectMessage(Message message) {
