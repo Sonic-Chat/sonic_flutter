@@ -3,6 +3,7 @@ enum ChatError {
   MESSAGE_MISSING,
   IMAGE_MISSING,
   CHAT_UID_ILLEGAL,
+  NOT_FRIENDS,
 }
 
 String chatErrorStrings(ChatError error) {
@@ -22,6 +23,10 @@ String chatErrorStrings(ChatError error) {
     case ChatError.CHAT_UID_ILLEGAL:
       {
         return 'Wrong chat used for the action.';
+      }
+    case ChatError.NOT_FRIENDS:
+      {
+        return 'You are not friends with this person.';
       }
     default:
       {
