@@ -8,6 +8,7 @@ import 'package:sonic_flutter/enum/chat_type.enum.dart';
 import 'package:sonic_flutter/enum/message_type.enum.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
+import 'package:sonic_flutter/pages/chat_message/group_chat_details.page.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/providers/singular_chat.provider.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
@@ -155,20 +156,29 @@ class _SingularChatState extends State<SingularChat> {
             appBar: AppBar(
               elevation: 0,
               leading: null,
-              automaticallyImplyLeading: false,
               title: context.watch<SingularChatProvider>().messageSelected
                   ? const Text('Message Selected')
-                  : ListTile(
-                      leading: ProfilePicture(
-                        imageUrl: chat.type == ChatType.SINGLE
-                            ? _friendAccount!.imageUrl
-                            : chat.imageUrl,
-                        size: MediaQuery.of(context).size.width * 0.1,
-                      ),
-                      title: Text(
-                        chat.type == ChatType.SINGLE
-                            ? _friendAccount!.fullName
-                            : chat.name,
+                  : GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamed(
+                          GroupChatDetails.route,
+                          arguments: chat,
+                        );
+                      },
+                      child: ListTile(
+                        tileColor: Colors.transparent,
+                        selectedTileColor: Colors.transparent,
+                        leading: ProfilePicture(
+                          imageUrl: chat.type == ChatType.SINGLE
+                              ? _friendAccount!.imageUrl
+                              : chat.imageUrl,
+                          size: MediaQuery.of(context).size.width * 0.1,
+                        ),
+                        title: Text(
+                          chat.type == ChatType.SINGLE
+                              ? _friendAccount!.fullName
+                              : chat.name,
+                        ),
                       ),
                     ),
               toolbarHeight: MediaQuery.of(context).size.height * 0.1,
