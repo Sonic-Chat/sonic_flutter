@@ -3,7 +3,7 @@ import 'package:sonic_flutter/pages/account/account_update.page.dart';
 import 'package:sonic_flutter/pages/account/search.page.dart';
 import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/pages/auth/register.page.dart';
-import 'package:sonic_flutter/pages/chat_message/group_chat_details.page.dart';
+import 'package:sonic_flutter/pages/chat_message/chat_details.page.dart';
 import 'package:sonic_flutter/pages/chat_message/send_image.page.dart';
 import 'package:sonic_flutter/pages/chat_message/singular_chat.page.dart';
 import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
@@ -36,8 +36,8 @@ class App extends StatelessWidget {
         FriendRequest.route: (BuildContext context) => const FriendRequest(),
         SingularChat.route: (BuildContext context) => const SingularChat(),
         SendImage.route: (BuildContext context) => const SendImage(),
-        GroupChatDetails.route: (BuildContext context) =>
-            const GroupChatDetails(),
+        ChatDetails.route: (BuildContext context) =>
+            const ChatDetails(),
       },
       initialRoute: Splash.route,
     );

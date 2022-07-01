@@ -8,7 +8,7 @@ import 'package:sonic_flutter/enum/chat_type.enum.dart';
 import 'package:sonic_flutter/enum/message_type.enum.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
-import 'package:sonic_flutter/pages/chat_message/group_chat_details.page.dart';
+import 'package:sonic_flutter/pages/chat_message/chat_details.page.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/providers/singular_chat.provider.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
@@ -161,7 +161,7 @@ class _SingularChatState extends State<SingularChat> {
                   : GestureDetector(
                       onTap: () {
                         Navigator.of(context).pushNamed(
-                          GroupChatDetails.route,
+                          ChatDetails.route,
                           arguments: chat,
                         );
                       },
