@@ -2,10 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sonic_flutter/arguments/display_image.argument.dart';
 import 'package:sonic_flutter/enum/chat_type.enum.dart';
 import 'package:sonic_flutter/enum/message_type.enum.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
+import 'package:sonic_flutter/pages/chat_message/display_image.page.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/providers/singular_chat.provider.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
@@ -94,30 +96,41 @@ class MessageBubble extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      CachedNetworkImage(
-                                        imageUrl: message.image!.imageUrl,
-                                        fit: BoxFit.fill,
-                                        progressIndicatorBuilder:
-                                            (context, url, downloadProgress) {
-                                          return Center(
-                                            child: CircularProgressIndicator(
-                                              value: downloadProgress.progress,
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).pushNamed(
+                                            DisplayImage.route,
+                                            arguments: DisplayImageArgument(
+                                              imageUrl: message.image!.imageUrl,
                                             ),
                                           );
                                         },
-                                        errorWidget: (context, url, error) {
-                                          log.e(error);
-                                          return const Icon(Icons.error);
-                                        },
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            20.0,
-                                          ),
-                                          child: Image(
-                                            image: imageProvider,
-                                            fit: BoxFit.contain,
+                                        child: CachedNetworkImage(
+                                          imageUrl: message.image!.imageUrl,
+                                          fit: BoxFit.fill,
+                                          progressIndicatorBuilder:
+                                              (context, url, downloadProgress) {
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value:
+                                                    downloadProgress.progress,
+                                              ),
+                                            );
+                                          },
+                                          errorWidget: (context, url, error) {
+                                            log.e(error);
+                                            return const Icon(Icons.error);
+                                          },
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              20.0,
+                                            ),
+                                            child: Image(
+                                              image: imageProvider,
+                                              fit: BoxFit.contain,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -135,29 +148,39 @@ class MessageBubble extends StatelessWidget {
                                     ],
                                   ),
                                 )
-                              : CachedNetworkImage(
-                                  imageUrl: message.image!.imageUrl,
-                                  fit: BoxFit.fill,
-                                  progressIndicatorBuilder:
-                                      (context, url, downloadProgress) {
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        value: downloadProgress.progress,
+                              : GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                      DisplayImage.route,
+                                      arguments: DisplayImageArgument(
+                                        imageUrl: message.image!.imageUrl,
                                       ),
                                     );
                                   },
-                                  errorWidget: (context, url, error) {
-                                    log.e(error);
-                                    return const Icon(Icons.error);
-                                  },
-                                  imageBuilder: (context, imageProvider) =>
-                                      ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                      20.0,
-                                    ),
-                                    child: Image(
-                                      image: imageProvider,
-                                      fit: BoxFit.contain,
+                                  child: CachedNetworkImage(
+                                    imageUrl: message.image!.imageUrl,
+                                    fit: BoxFit.fill,
+                                    progressIndicatorBuilder:
+                                        (context, url, downloadProgress) {
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: downloadProgress.progress,
+                                        ),
+                                      );
+                                    },
+                                    errorWidget: (context, url, error) {
+                                      log.e(error);
+                                      return const Icon(Icons.error);
+                                    },
+                                    imageBuilder: (context, imageProvider) =>
+                                        ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                        20.0,
+                                      ),
+                                      child: Image(
+                                        image: imageProvider,
+                                        fit: BoxFit.contain,
+                                      ),
                                     ),
                                   ),
                                 ),
