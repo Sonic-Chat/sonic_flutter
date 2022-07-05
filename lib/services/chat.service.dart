@@ -1008,7 +1008,7 @@ class ChatService {
   /*
    * Service Implementation for the updating of group chat.
    */
-  Future<void> updateGroupChat(
+  Future<Chat> updateGroupChat(
     UpdateGroupChatDto updateGroupChatDto,
   ) async {
     try {
@@ -1069,8 +1069,9 @@ class ChatService {
       // Decoding chat from JSON.
       Chat chat = Chat.fromJson(json.decode(response.body));
 
-      // Updating chat on hive.
-      syncChatToOfflineDb(chat);
+      await syncMessage();
+
+      return chat;
     } on SocketException {
       log.wtf("Dedicated Server Offline");
       throw GeneralException(
