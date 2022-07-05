@@ -5,6 +5,7 @@ import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/pages/auth/register.page.dart';
 import 'package:sonic_flutter/pages/chat_message/chat_details.page.dart';
 import 'package:sonic_flutter/pages/chat_message/display_image.page.dart';
+import 'package:sonic_flutter/pages/chat_message/name_photo_group_chat.page.dart';
 import 'package:sonic_flutter/pages/chat_message/select_participants.page.dart';
 import 'package:sonic_flutter/pages/chat_message/send_image.page.dart';
 import 'package:sonic_flutter/pages/chat_message/singular_chat.page.dart';
@@ -42,6 +43,8 @@ class App extends StatelessWidget {
         ChatDetails.route: (BuildContext context) => const ChatDetails(),
         SelectParticipants.route: (BuildContext context) =>
             const SelectParticipants(),
+        NamePhotoGroupChat.route: (BuildContext context) =>
+            const NamePhotoGroupChat(),
       },
       initialRoute: Splash.route,
     );
