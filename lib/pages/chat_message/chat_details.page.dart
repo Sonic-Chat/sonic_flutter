@@ -5,6 +5,7 @@ import 'package:flutter_offline/flutter_offline.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:sonic_flutter/dtos/chat_message/delete_group_chat/delete_group_chat.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/update_group_chat/update_group_chat.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/update_group_chat/update_group_chat_with_image/update_group_chat_with_image.dto.dart';
 import 'package:sonic_flutter/enum/chat_error.enum.dart';
@@ -357,6 +358,64 @@ class _ChatDetailsState extends State<ChatDetails> {
     });
   }
 
+  /*
+   * Form submission method for chat group name updating.
+   */
+  Future<void> _onDeleteGroup() async {
+    setState(() {
+      _loading = true;
+    });
+
+    try {
+      DeleteGroupChatDto deleteGroupChatDto = DeleteGroupChatDto(
+        chatId: _chat!.id,
+      );
+
+      await _chatService.deleteGroupChat(deleteGroupChatDto);
+
+      setState(() {
+        _loading = false;
+      });
+
+      Navigator.of(context).popUntil(
+        ModalRoute.withName(
+          Home.route,
+        ),
+      );
+
+      // Display success snackbar.
+      displaySnackBar("Group chat deleted!", context);
+    }
+    // Handle errors.
+    on ChatException catch (error) {
+      for (var message in error.messages) {
+        displaySnackBar(
+          chatErrorStrings(message),
+          context,
+        );
+      }
+    } on GeneralException catch (error) {
+      displaySnackBar(
+        generalErrorStrings(error.message),
+        context,
+      );
+    } catch (error, stackTrace) {
+      log.e(
+        'Name Photo Group Chat Page Error',
+        error,
+        stackTrace,
+      );
+      displaySnackBar(
+        'Something went wrong, please try again later',
+        context,
+      );
+    }
+
+    setState(() {
+      _loading = false;
+    });
+  }
+
   void _updateName() {
     showDialog(
       context: context,
@@ -518,7 +577,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                         child: const Text('Leave Group'),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: _onDeleteGroup,
                         child: const Text(
                           'Delete Group',
                           style: TextStyle(

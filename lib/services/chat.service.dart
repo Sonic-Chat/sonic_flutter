@@ -1155,11 +1155,7 @@ class ChatService {
         );
       }
 
-      // Decoding chat from JSON.
-      Chat chat = Chat.fromJson(json.decode(response.body));
-
-      // Remove chat from offline storage.
-      _chatDb.delete(chat.id);
+      await syncMessage();
     } on SocketException {
       log.wtf("Dedicated Server Offline");
       throw GeneralException(
