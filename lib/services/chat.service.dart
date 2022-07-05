@@ -16,6 +16,7 @@ import 'package:sonic_flutter/dtos/chat_message/send_image/send_image.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/send_message/send_message.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/send_message_image/send_message_image.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/sync_message/sync_message.dto.dart';
+import 'package:sonic_flutter/dtos/chat_message/update_group_chat/update_group_chat.dto.dart';
 import 'package:sonic_flutter/dtos/chat_message/update_message/update_message.dto.dart';
 import 'package:sonic_flutter/enum/auth_error.enum.dart';
 import 'package:sonic_flutter/enum/chat_error.enum.dart';
@@ -948,9 +949,97 @@ class ChatService {
       // Preparing the body for the request
       String body = json.encode(createGroupChatDto.toJson());
 
-      // Creating new
+      // Creating new group chat.
       http.Response response = await http
           .post(
+            url,
+            headers: headers,
+            body: body,
+          )
+          .timeout(const Duration(seconds: 10));
+
+      // Handling Errors.
+      if (response.statusCode >= 400 && response.statusCode < 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+        throw ChatException(
+            messages: ChatError.values
+                .where((error) =>
+                    error.toString().substring("ChatError.".length) ==
+                    body['message'])
+                .toList());
+      } else if (response.statusCode >= 500) {
+        Map<String, dynamic> body = json.decode(response.body);
+
+        log.e(body["message"]);
+
+        throw GeneralException(
+          message: GeneralError.SOMETHING_WENT_WRONG,
+        );
+      }
+
+      // Decoding chat from JSON.
+      Chat chat = Chat.fromJson(json.decode(response.body));
+
+      // Updating chat on hive.
+      syncChatToOfflineDb(chat);
+    } on SocketException {
+      log.wtf("Dedicated Server Offline");
+      throw GeneralException(
+        message: GeneralError.OFFLINE,
+      );
+    } on TimeoutException {
+      log.wtf("Dedicated Server Offline");
+      throw GeneralException(
+        message: GeneralError.OFFLINE,
+      );
+    } on FA.FirebaseAuthException catch (error) {
+      if (error.code == "network-request-failed") {
+        log.wtf("Firebase Server Offline");
+        throw GeneralException(
+          message: GeneralError.OFFLINE,
+        );
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  /*
+   * Service Implementation for the updating of group chat.
+   */
+  Future<void> updateGroupChat(
+    UpdateGroupChatDto updateGroupChatDto,
+  ) async {
+    try {
+      // Get the logged in user details.
+      FA.User? firebaseUser = _firebaseAuth.currentUser;
+
+      // Check if user is not null.
+      if (firebaseUser == null) {
+        // If there is no user logged is using firebase, throw an exception.
+        throw AuthException(
+          message: AuthError.UNAUTHENTICATED,
+        );
+      }
+      // Fetch the ID token for the user.
+      String firebaseAuthToken =
+          await _firebaseAuth.currentUser!.getIdToken(true);
+
+      // Preparing the URL for the server request.
+      Uri url = Uri.parse("$apiUrl/api/v1/chat/group");
+
+      // Preparing the headers for the request.
+      Map<String, String> headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $firebaseAuthToken",
+      };
+
+      // Preparing the body for the request
+      String body = json.encode(updateGroupChatDto.toJson());
+
+      // Update group chat on server.
+      http.Response response = await http
+          .put(
             url,
             headers: headers,
             body: body,
