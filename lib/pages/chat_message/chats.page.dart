@@ -9,6 +9,7 @@ import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/pages/account/account_update.page.dart';
 import 'package:sonic_flutter/pages/account/search.page.dart';
 import 'package:sonic_flutter/pages/auth/login.page.dart';
+import 'package:sonic_flutter/pages/chat_message/select_participants.page.dart';
 import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
 import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
@@ -98,6 +99,11 @@ class _ChatsState extends State<Chats> {
                 await _authService.logOut();
                 Navigator.of(context).pushReplacementNamed(
                   Login.route,
+                );
+              }
+              if (selected == HomePopup.createGroupChat) {
+                Navigator.of(context).pushNamed(
+                  SelectParticipants.route,
                 );
               }
             },

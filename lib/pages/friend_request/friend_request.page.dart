@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sonic_flutter/enum/friend_status.enum.dart';
-import 'package:sonic_flutter/widgets/user_account/friend_list_tab.widget.dart';
+import 'package:sonic_flutter/widgets/friend_request/friend_list_tab.widget.dart';
 
 class FriendRequest extends StatelessWidget {
   static const route = "/friends";
