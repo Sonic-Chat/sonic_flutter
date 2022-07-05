@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
-import 'package:sonic_flutter/enum/account_popup.enum.dart';
+import 'package:sonic_flutter/enum/home_popup.enum.dart';
 import 'package:sonic_flutter/enum/chat_error.enum.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/pages/account/account_update.page.dart';
@@ -65,7 +65,7 @@ class _ChatsState extends State<Chats> {
               );
             },
           ),
-          PopupMenuButton<AccountPopup>(
+          PopupMenuButton<HomePopup>(
             child: const Icon(
               Icons.more_vert,
               color: Colors.white,
@@ -73,22 +73,28 @@ class _ChatsState extends State<Chats> {
             itemBuilder: (context) => [
               const PopupMenuItem(
                 child: Text(
+                  "Create Group Chat",
+                ),
+                value: HomePopup.createGroupChat,
+              ),
+              const PopupMenuItem(
+                child: Text(
                   "Settings",
                 ),
-                value: AccountPopup.settings,
+                value: HomePopup.settings,
               ),
               const PopupMenuItem(
                 child: Text("Log Out"),
-                value: AccountPopup.logOut,
+                value: HomePopup.logOut,
               ),
             ],
-            onSelected: (AccountPopup? selected) async {
-              if (selected == AccountPopup.settings) {
+            onSelected: (HomePopup? selected) async {
+              if (selected == HomePopup.settings) {
                 Navigator.of(context).pushNamed(
                   AccountUpdate.route,
                 );
               }
-              if (selected == AccountPopup.logOut) {
+              if (selected == HomePopup.logOut) {
                 await _authService.logOut();
                 Navigator.of(context).pushReplacementNamed(
                   Login.route,
