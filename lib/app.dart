@@ -3,6 +3,10 @@ import 'package:sonic_flutter/pages/account/account_update.page.dart';
 import 'package:sonic_flutter/pages/account/search.page.dart';
 import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/pages/auth/register.page.dart';
+import 'package:sonic_flutter/pages/chat_message/chat_details.page.dart';
+import 'package:sonic_flutter/pages/chat_message/display_image.page.dart';
+import 'package:sonic_flutter/pages/chat_message/name_photo_group_chat.page.dart';
+import 'package:sonic_flutter/pages/chat_message/select_participants.page.dart';
 import 'package:sonic_flutter/pages/chat_message/send_image.page.dart';
 import 'package:sonic_flutter/pages/chat_message/singular_chat.page.dart';
 import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
@@ -19,9 +23,11 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Sonic Chat Dev',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
+          primarySwatch: Colors.blue,
+          useMaterial3: true,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.transparent,
+          )),
       debugShowCheckedModeBanner: false,
       routes: {
         Splash.route: (BuildContext context) => const Splash(),
@@ -33,6 +39,12 @@ class App extends StatelessWidget {
         FriendRequest.route: (BuildContext context) => const FriendRequest(),
         SingularChat.route: (BuildContext context) => const SingularChat(),
         SendImage.route: (BuildContext context) => const SendImage(),
+        DisplayImage.route: (BuildContext context) => const DisplayImage(),
+        ChatDetails.route: (BuildContext context) => const ChatDetails(),
+        SelectParticipants.route: (BuildContext context) =>
+            const SelectParticipants(),
+        NamePhotoGroupChat.route: (BuildContext context) =>
+            const NamePhotoGroupChat(),
       },
       initialRoute: Splash.route,
     );

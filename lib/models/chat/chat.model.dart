@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sonic_flutter/enum/chat_type.enum.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 
@@ -8,10 +9,21 @@ part 'chat.model.g.dart';
 @JsonSerializable()
 @HiveType(typeId: 8)
 class Chat {
-
   @JsonKey(defaultValue: '')
   @HiveField(0, defaultValue: '')
   final String id;
+
+  @JsonKey(defaultValue: '')
+  @HiveField(7, defaultValue: '')
+  final String imageUrl;
+
+  @JsonKey(defaultValue: '')
+  @HiveField(8, defaultValue: '')
+  final String name;
+
+  @JsonKey(defaultValue: ChatType.SINGLE)
+  @HiveField(9, defaultValue: ChatType.SINGLE)
+  final ChatType type;
 
   @JsonKey(defaultValue: [])
   @HiveField(1, defaultValue: [])
@@ -37,6 +49,9 @@ class Chat {
 
   Chat({
     required this.id,
+    required this.imageUrl,
+    required this.name,
+    required this.type,
     required this.messages,
     required this.participants,
     required this.delivered,
@@ -45,8 +60,7 @@ class Chat {
     required this.updatedAt,
   });
 
-  factory Chat.fromJson(Map<String, dynamic> json) =>
-      _$ChatFromJson(json);
+  factory Chat.fromJson(Map<String, dynamic> json) => _$ChatFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChatToJson(this);
 }

@@ -12,7 +12,7 @@ import 'package:sonic_flutter/services/friend_request.service.dart';
 import 'package:sonic_flutter/utils/display_snackbar.util.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
 import 'package:sonic_flutter/widgets/common/loading_icon_button.widget.dart';
-import 'package:sonic_flutter/widgets/user_account/user_friend_list_item.dart';
+import 'package:sonic_flutter/widgets/friend_request/user_friend_list_item.dart';
 
 import '../../exceptions/friend_request.exception.dart';
 

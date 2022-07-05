@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sonic_flutter/animations/not_found.animation.dart';
 import 'package:sonic_flutter/models/friend_request/friend_request.model.dart';
-import 'package:sonic_flutter/widgets/user_account/new_request.widget.dart';
+import 'package:sonic_flutter/widgets/friend_request/new_request.widget.dart';
 
 class NewRequestList extends StatelessWidget {
   final List<FriendRequest> users;

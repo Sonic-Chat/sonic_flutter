@@ -4,9 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:sonic_flutter/arguments/singular_chat.argument.dart';
 import 'package:sonic_flutter/constants/hive.constant.dart';
 import 'package:sonic_flutter/enum/chat_error.enum.dart';
+import 'package:sonic_flutter/enum/chat_type.enum.dart';
 import 'package:sonic_flutter/enum/message_type.enum.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/models/chat/chat.model.dart';
+import 'package:sonic_flutter/pages/chat_message/chat_details.page.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
 import 'package:sonic_flutter/providers/singular_chat.provider.dart';
 import 'package:sonic_flutter/services/chat.service.dart';
@@ -115,9 +117,10 @@ class _SingularChatState extends State<SingularChat> {
 
   @override
   Widget build(BuildContext context) {
-    String chatId =
-        (ModalRoute.of(context)!.settings.arguments as SingularChatArgument)
-            .chatId;
+    SingularChatArgument singularChatArgument =
+        ModalRoute.of(context)!.settings.arguments as SingularChatArgument;
+
+    String chatId = singularChatArgument.chatId;
 
     _chatService
         .markSeen(
@@ -130,6 +133,7 @@ class _SingularChatState extends State<SingularChat> {
     return ChangeNotifierProvider<SingularChatProvider>(
       create: (_) => SingularChatProvider(
         chatId: chatId,
+        type: singularChatArgument.type,
       ),
       child: ValueListenableBuilder<Box<Chat>>(
         valueListenable: Hive.box<Chat>(CHAT_BOX).listenable(),
@@ -152,16 +156,29 @@ class _SingularChatState extends State<SingularChat> {
             appBar: AppBar(
               elevation: 0,
               leading: null,
-              automaticallyImplyLeading: false,
               title: context.watch<SingularChatProvider>().messageSelected
                   ? const Text('Message Selected')
-                  : ListTile(
-                      leading: ProfilePicture(
-                        imageUrl: _friendAccount!.imageUrl,
-                        size: MediaQuery.of(context).size.width * 0.1,
-                      ),
-                      title: Text(
-                        _friendAccount!.fullName,
+                  : GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamed(
+                          ChatDetails.route,
+                          arguments: chat,
+                        );
+                      },
+                      child: ListTile(
+                        tileColor: Colors.transparent,
+                        selectedTileColor: Colors.transparent,
+                        leading: ProfilePicture(
+                          imageUrl: chat.type == ChatType.SINGLE
+                              ? _friendAccount!.imageUrl
+                              : chat.imageUrl,
+                          size: MediaQuery.of(context).size.width * 0.1,
+                        ),
+                        title: Text(
+                          chat.type == ChatType.SINGLE
+                              ? _friendAccount!.fullName
+                              : chat.name,
+                        ),
                       ),
                     ),
               toolbarHeight: MediaQuery.of(context).size.height * 0.1,

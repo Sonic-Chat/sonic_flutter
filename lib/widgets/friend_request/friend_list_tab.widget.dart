@@ -9,8 +9,8 @@ import 'package:sonic_flutter/exceptions/general.exception.dart';
 import 'package:sonic_flutter/models/friend_request/friend_request.model.dart';
 import 'package:sonic_flutter/services/friend_request.service.dart';
 import 'package:sonic_flutter/utils/logger.util.dart';
-import 'package:sonic_flutter/widgets/user_account/new_request_list.widget.dart';
-import 'package:sonic_flutter/widgets/user_account/user_friend_list.widget.dart';
+import 'package:sonic_flutter/widgets/friend_request/new_request_list.widget.dart';
+import 'package:sonic_flutter/widgets/friend_request/user_friend_list.widget.dart';
 
 class FriendListTab extends StatefulWidget {
   final FriendStatus status;

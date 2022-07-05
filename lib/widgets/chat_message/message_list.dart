@@ -30,8 +30,10 @@ class MessageList extends StatelessWidget {
                 );
               },
             )
-          : const NotFound(
-              message: 'No messages present',
+          : const SingleChildScrollView(
+              child: NotFound(
+                message: 'No messages present',
+              ),
             ),
     );
   }
