@@ -74,7 +74,7 @@ class MessageBubble extends StatelessWidget {
                         Text(
                           message.sentBy.fullName,
                           style: TextStyle(
-                            color: userCheck ? Colors.white : Colors.black,
+                            color: userCheck ? Colors.white : Colors.blue,
                           ),
                         ),
                       message.type == MessageType.TEXT
@@ -125,7 +125,7 @@ class MessageBubble extends StatelessWidget {
                                               (context, imageProvider) =>
                                                   ClipRRect(
                                             borderRadius: BorderRadius.circular(
-                                              20.0,
+                                              5.0,
                                             ),
                                             child: Image(
                                               image: imageProvider,
@@ -134,15 +134,12 @@ class MessageBubble extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          message.message!,
-                                          style: TextStyle(
-                                            color: userCheck
-                                                ? Colors.white
-                                                : Colors.black,
-                                          ),
+                                      Text(
+                                        message.message!,
+                                        style: TextStyle(
+                                          color: userCheck
+                                              ? Colors.white
+                                              : Colors.black,
                                         ),
                                       ),
                                     ],
