@@ -38,6 +38,7 @@ class _SingularChatState extends State<SingularChat> {
   void initState() {
     super.initState();
 
+    // Fetching service from the providers.
     _chatService = Provider.of<ChatService>(
       context,
       listen: false,
@@ -47,6 +48,7 @@ class _SingularChatState extends State<SingularChat> {
       listen: false,
     );
 
+    // Read error from stream and display errors.
     _chatService.chatErrorsStreams.stream.listen((event) {
       for (var element in event) {
         String errorString = chatErrorStrings(element);
@@ -55,6 +57,9 @@ class _SingularChatState extends State<SingularChat> {
     });
   }
 
+  /*
+   * Implementation for asking message deletion confirmation.
+   */
   void _confirmDelete(SingularChatProvider singularChatProvider) {
     showDialog(
       context: context,
@@ -83,6 +88,9 @@ class _SingularChatState extends State<SingularChat> {
     );
   }
 
+  /*
+   * Implementation for message deletion confirmation.
+   */
   Future<void> _onDeleteMessage(
     SingularChatProvider singularChatProvider,
   ) async {
@@ -91,12 +99,15 @@ class _SingularChatState extends State<SingularChat> {
     });
 
     try {
+      // Delete message from the server.
       await _chatService.deleteMessage(
         messageId: singularChatProvider.message!.id,
       );
 
+      // Close the confirmation alert.
       Navigator.of(context).pop();
 
+      // Unselect message.
       singularChatProvider.unselectMessage();
     } catch (error, stackTrace) {
       log.e(
@@ -122,6 +133,7 @@ class _SingularChatState extends State<SingularChat> {
 
     String chatId = singularChatArgument.chatId;
 
+    // Mark chat seen.
     _chatService
         .markSeen(
           chatId: chatId,

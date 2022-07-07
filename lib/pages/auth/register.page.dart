@@ -10,7 +10,6 @@ import 'package:sonic_flutter/enum/auth_error.enum.dart';
 import 'package:sonic_flutter/enum/general_error.enum.dart';
 import 'package:sonic_flutter/exceptions/auth.exception.dart';
 import 'package:sonic_flutter/exceptions/general.exception.dart';
-import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/pages/auth/login.page.dart';
 import 'package:sonic_flutter/services/auth.service.dart';
 import 'package:sonic_flutter/utils/display_snackbar.util.dart';
@@ -49,6 +48,8 @@ class _RegisterState extends State<Register> {
   @override
   void initState() {
     super.initState();
+
+    // Fetching service from the providers.
     _authService = Provider.of<AuthService>(context, listen: false);
   }
 
@@ -147,6 +148,9 @@ class _RegisterState extends State<Register> {
     );
   }
 
+  /*
+   * Form Submission method for creation of a new account.
+   */
   Future<void> _onFormSubmit() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -157,6 +161,7 @@ class _RegisterState extends State<Register> {
     });
 
     try {
+      // Preparing the DTO.
       RegisterAccountDto registerAccountDto = RegisterAccountDto(
         email: _emailAddressController.text,
         password: _passwordController.text,
@@ -165,6 +170,7 @@ class _RegisterState extends State<Register> {
         imageUrl: _imageUrl,
       );
 
+      // Create it on the server.
       await _authService.registerAccount(registerAccountDto);
 
       displaySnackBar(

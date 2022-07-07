@@ -26,15 +26,20 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
 
+    // Get the FCM Messaging instance
     _messaging = FirebaseMessaging.instance;
 
+    // Fetching service from the providers.
     _tokenService = Provider.of<TokenService>(
       context,
       listen: false,
     );
 
+    // Check for internet connectivity.
     checkConnectivity().then((value) {
       if (value) {
+
+        // Generate token and save it in the server.
         _messaging
             .getToken()
             .then(
@@ -71,6 +76,7 @@ class _HomeState extends State<Home> {
       log.e("Home Page Error", error, stackTrace);
     });
 
+    // Fetch friend requests from the server and save it to the database.
     Provider.of<FriendRequestService>(
       context,
       listen: false,

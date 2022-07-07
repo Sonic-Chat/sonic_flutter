@@ -32,9 +32,11 @@ class _ChatsState extends State<Chats> {
   void initState() {
     super.initState();
 
+    // Fetching service from the providers.
     _chatService = Provider.of(context, listen: false);
     _authService = Provider.of(context, listen: false);
 
+    // Listen for chat error streams.
     _chatService.chatErrorsStreams.stream.listen((event) {
       for (var element in event) {
         String errorString = chatErrorStrings(element);
