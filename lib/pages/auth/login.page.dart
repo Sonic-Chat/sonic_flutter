@@ -39,9 +39,14 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
+
+    // Fetching service from the providers.
     _authService = Provider.of<AuthService>(context, listen: false);
   }
 
+  /*
+   * Form submission method for logging into the account.
+   */
   Future<void> _onFormSubmit() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -52,14 +57,14 @@ class _LoginState extends State<Login> {
     });
 
     try {
+      // Preparing the DTO.
       LoginAccountDto loginAccountDto = LoginAccountDto(
         password: _passwordController.text,
         username: _usernameController.text,
       );
 
+      // Login to the account.
       Account account = await _authService.loginAccount(loginAccountDto);
-
-      log.i(account.id);
 
       Provider.of<AccountProvider>(context, listen: false).saveAccount(account);
 

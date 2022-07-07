@@ -29,6 +29,7 @@ class _SelectParticipantsState extends State<SelectParticipants> {
   void initState() {
     super.initState();
 
+    // Fetching service from the providers.
     _friendRequestService = context.read<FriendRequestService>();
   }
 

@@ -47,6 +47,7 @@ class _NamePhotoGroupChatState extends State<NamePhotoGroupChat> {
   void initState() {
     super.initState();
 
+    // Fetching service from the providers.
     _chatService = context.read<ChatService>();
   }
 

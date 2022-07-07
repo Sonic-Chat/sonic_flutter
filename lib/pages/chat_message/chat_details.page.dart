@@ -225,7 +225,7 @@ class _ChatDetailsState extends State<ChatDetails> {
   }
 
   /*
-   * Form submission method for chat group name updating.
+   * Form submission method for chat group image updating.
    */
   Future<void> _onImageUpdate() async {
     setState(() {
@@ -233,6 +233,7 @@ class _ChatDetailsState extends State<ChatDetails> {
     });
 
     try {
+      // Preparing the DTO.
       UpdateGroupChatDto updateGroupChatDto = UpdateGroupChatWithImageDto(
         chatId: _chat!.id,
         participants: _chat!.participants.map((e) => e.id).toList(),
@@ -240,6 +241,7 @@ class _ChatDetailsState extends State<ChatDetails> {
         imageUrl: _imageUrl,
       );
 
+      // Update it on server.
       Chat chat = await _chatService.updateGroupChat(updateGroupChatDto);
 
       setState(() {
@@ -284,7 +286,7 @@ class _ChatDetailsState extends State<ChatDetails> {
   }
 
   /*
-   * Form submission method for chat group name updating.
+   * Implementation for leaving group.
    */
   Future<void> _onLeaveGroup() async {
     setState(() {
@@ -294,6 +296,7 @@ class _ChatDetailsState extends State<ChatDetails> {
     Account loggedInAccount = context.read<AccountProvider>().getAccount()!;
 
     try {
+      // Preparing the DTO.
       UpdateGroupChatDto updateGroupChatDto = _imageUrl.isEmpty
           ? UpdateGroupChatDto(
               chatId: _chat!.id,
@@ -313,6 +316,7 @@ class _ChatDetailsState extends State<ChatDetails> {
               imageUrl: _imageUrl,
             );
 
+      // Update it on server.
       await _chatService.updateGroupChat(updateGroupChatDto);
 
       setState(() {
@@ -359,7 +363,7 @@ class _ChatDetailsState extends State<ChatDetails> {
   }
 
   /*
-   * Form submission method for chat group name updating.
+   * Form submission method for chat group delete.
    */
   Future<void> _onDeleteGroup() async {
     setState(() {
@@ -367,10 +371,12 @@ class _ChatDetailsState extends State<ChatDetails> {
     });
 
     try {
+      // Preparing the DTO.
       DeleteGroupChatDto deleteGroupChatDto = DeleteGroupChatDto(
         chatId: _chat!.id,
       );
 
+      // Delete it on server.
       await _chatService.deleteGroupChat(deleteGroupChatDto);
 
       setState(() {
@@ -416,6 +422,9 @@ class _ChatDetailsState extends State<ChatDetails> {
     });
   }
 
+  /*
+   * Update name Alert Dialog method implementation.
+   */
   void _updateName() {
     showDialog(
       context: context,

@@ -8,6 +8,7 @@ import 'package:sonic_flutter/models/chat/chat.model.dart';
 import 'package:sonic_flutter/models/message/message.model.dart';
 import 'package:sonic_flutter/pages/chat_message/singular_chat.page.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
+import 'package:sonic_flutter/utils/logger.util.dart';
 import 'package:sonic_flutter/widgets/common/profile_picture.widget.dart';
 import 'package:intl/intl.dart';
 
@@ -56,6 +57,10 @@ class _ChatDisplayState extends State<ChatDisplay> {
 
       dateTime = lastMessage.createdAt;
 
+      String message = lastMessage.message!.length > 10
+          ? "${lastMessage.message!.substring(0, 10)}..."
+          : lastMessage.message!;
+
       switch (lastMessage.type) {
         case MessageType.IMAGE:
           {
@@ -66,16 +71,17 @@ class _ChatDisplayState extends State<ChatDisplay> {
           }
         case MessageType.IMAGE_TEXT:
           {
+            log.i(lastMessage.message!.length);
             body = widget.chat.type == ChatType.GROUP
-                ? '${account.fullName.split(" ")[0]}: 📸 ${lastMessage.message!}'
-                : '📸 ${lastMessage.message!}';
+                ? '${account.fullName.split(" ")[0]}: 📸 $message'
+                : '📸 $message';
             break;
           }
         case MessageType.TEXT:
           {
             body = widget.chat.type == ChatType.GROUP
-                ? '${account.fullName.split(" ")[0]}: ${lastMessage.message!}'
-                : lastMessage.message!;
+                ? '${account.fullName.split(" ")[0]}: $message'
+                : message;
             break;
           }
         default:

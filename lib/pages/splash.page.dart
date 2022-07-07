@@ -4,12 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sonic_flutter/animations/loading.animation.dart';
 import 'package:sonic_flutter/arguments/notification_action.argument.dart';
-import 'package:sonic_flutter/arguments/singular_chat.argument.dart';
 import 'package:sonic_flutter/constants/notification_payload.constant.dart';
 import 'package:sonic_flutter/models/account/account.model.dart';
 import 'package:sonic_flutter/pages/auth/login.page.dart';
-import 'package:sonic_flutter/pages/chat_message/chats.page.dart';
-import 'package:sonic_flutter/pages/chat_message/singular_chat.page.dart';
 import 'package:sonic_flutter/pages/friend_request/friend_request.page.dart';
 import 'package:sonic_flutter/pages/home.page.dart';
 import 'package:sonic_flutter/providers/account.provider.dart';
@@ -41,11 +38,13 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
 
+    // Fetching provider from the providers.
     _notificationActionProvider = Provider.of<NotificationActionProvider>(
       context,
       listen: false,
     );
 
+    // Fetching service from the providers.
     _authService = Provider.of<AuthService>(
       context,
       listen: false,
@@ -70,6 +69,9 @@ class _SplashState extends State<Splash> {
     });
   }
 
+  /*
+   * Handle Firebase Auth Events.
+   */
   void _handleFirebaseAuthEvents(FA.User? user) {
     if (user != null) {
       log.i("Firebase Logged In User");
@@ -80,6 +82,9 @@ class _SplashState extends State<Splash> {
     }
   }
 
+  /*
+   * Handle fetching authentication status from the server.
+   */
   void _handleServerAuthStatus() {
     _authService
         .getUser()
@@ -87,6 +92,9 @@ class _SplashState extends State<Splash> {
         .catchError(_handleServerAuthError);
   }
 
+  /*
+   * Handle server auth error from the server.
+   */
   _handleServerAuthError(error, stackTrace) {
     if (error.runtimeType == FA.FirebaseAuthException) {
       FA.FirebaseAuthException exception = error as FA.FirebaseAuthException;
@@ -98,11 +106,16 @@ class _SplashState extends State<Splash> {
     }
   }
 
+  /*
+   * Handle server auth success from the server.
+   */
   FutureOr<void> _handleServerAuthSuccess(Account account) {
     log.i("Server Logged In User");
 
+    // Save the account in the device storage.
     Provider.of<AccountProvider>(context, listen: false).saveAccount(account);
 
+    // Connect to the websocket server.
     log.i("Connecting to WebSocket Server");
     _chatService
         .connectServer()
@@ -112,6 +125,7 @@ class _SplashState extends State<Splash> {
         .catchError((error, stackTrace) =>
             log.e("Splash Page Error", error, stackTrace));
 
+    // Read notification action and route to the proper page.
     NotificationAction notificationAction = _notificationActionProvider.action;
 
     switch (notificationAction.action) {
@@ -149,6 +163,9 @@ class _SplashState extends State<Splash> {
     }
   }
 
+  /*
+   * Handle Firebase Auth Stream errors.
+   */
   _handleFirebaseStreamError(error, stackTrace) {
     log.e(error.toString(), error, stackTrace);
   }
