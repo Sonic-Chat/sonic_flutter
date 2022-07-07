@@ -5,6 +5,9 @@ enum FriendError {
   ILLEGAL_ACTION,
 }
 
+/*
+ * Handle error strings
+ */
 String friendErrorStrings(FriendError error) {
   switch (error) {
     case FriendError.USER_NOT_FOUND:

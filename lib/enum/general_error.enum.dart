@@ -4,6 +4,9 @@ enum GeneralError {
   ILLEGAL_ACTION,
 }
 
+/*
+ * Handle error strings
+ */
 String generalErrorStrings(GeneralError error) {
   switch (error) {
     case GeneralError.SOMETHING_WENT_WRONG:
