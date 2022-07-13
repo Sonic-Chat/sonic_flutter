@@ -30,7 +30,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         MarkDeliveredDto(
           chatId: fcmData['chatId'],
         ),
-        "http://10.0.2.2:5000",
+        "https://sonic-chat.herokuapp.com",
       );
     } catch (error, stackTrace) {
       log.e("FCM Error", error, stackTrace);
